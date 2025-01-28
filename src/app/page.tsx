@@ -2,6 +2,19 @@ import DonationCard from "@/components/DonationCard";
 import MediaCard from "@/features/media/components/MediaCard";
 import { getPopularCached } from "@/features/media/server/actions/media";
 
+export const revalidate = 10800; // 3 HOURS
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const media = await getPopularCached();
+  return media.map((item) => ({
+    tmdbId: String(item.tmdbId),
+    mediaType: item.mediaType,
+    season: String(item.season),
+    episode: "1",
+  }));
+}
+
 const Home = async () => {
   const data = await getPopularCached();
   return (

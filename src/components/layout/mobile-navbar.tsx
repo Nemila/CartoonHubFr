@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -41,7 +42,7 @@ const MobileNavbar = () => {
             size={"lg"}
             asChild
           >
-            <Link href={"/"}>
+            <Link prefetch={false} href={"/"}>
               <Home />
               Accueil
             </Link>
@@ -54,7 +55,7 @@ const MobileNavbar = () => {
             size={"lg"}
             asChild
           >
-            <Link href={"/catalogue"}>
+            <Link prefetch={false} href={"/catalogue"}>
               <Clapperboard />
               Catalogue
             </Link>
@@ -67,7 +68,7 @@ const MobileNavbar = () => {
             size={"lg"}
             asChild
           >
-            <Link href={"https://discord.gg/M7gRTuXc6d"}>
+            <Link prefetch={false} href={"https://discord.gg/M7gRTuXc6d"}>
               <MessageCircle />
               Communauté
             </Link>

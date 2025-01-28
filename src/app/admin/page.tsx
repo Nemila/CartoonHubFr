@@ -5,14 +5,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getMediaCountCached } from "@/features/media/server/actions/media";
+import { getMediaCount } from "@/features/media/server/actions/media";
 import { clearFullCache } from "@/lib/cache";
 import { Cat, Clapperboard } from "lucide-react";
 
 const AdminPage = async () => {
   const [movieCount, serieCount] = await Promise.all([
-    getMediaCountCached("movies"),
-    getMediaCountCached("series"),
+    getMediaCount("movies"),
+    getMediaCount("series"),
   ]);
 
   return (

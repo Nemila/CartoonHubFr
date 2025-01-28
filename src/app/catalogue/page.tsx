@@ -18,9 +18,6 @@ import { notFound, redirect } from "next/navigation";
 
 type Props = { searchParams: Promise<{ page?: string; orderBy?: string }> };
 
-export const revalidate = 3600;
-export const dynamicParams = true;
-
 const MediaPage = async ({ searchParams }: Props) => {
   const valid = changePageSchema.safeParse(await searchParams);
   if (!valid.success) return redirect(changePage());

@@ -16,7 +16,7 @@ type ApiResponse<T> = {
 
 export const dbCache = <T extends (...args: any[]) => Promise<any>>(
   cb: Parameters<typeof unstable_cache<T>>[0],
-  { tags, revalidate = 3600 }: { tags: string[]; revalidate?: number },
+  { tags, revalidate }: { tags: string[]; revalidate?: number },
 ) => {
   return cache(
     unstable_cache<T>(cb, undefined, {

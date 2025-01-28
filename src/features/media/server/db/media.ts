@@ -16,11 +16,16 @@ export default class MediaService {
       take: payload?.take || 24,
       skip: payload?.skip,
       orderBy: payload?.orderBy || { popularity: "desc" },
-      distinct: payload?.distinct,
     });
   };
 
-  getPopular = async () => await this.findMany({ distinct: ["originalTitle"] });
+  getPopular = async () => {
+    return await prisma.media.findMany({
+      where: { mediaType: "movies" },
+      orderBy: { popularity: "desc" },
+      take: 36,
+    });
+  };
 
   getRecentUpdates = async () => {
     return await this.findMany({
@@ -394,11 +399,6 @@ export default class MediaService {
   };
 
   countMedia = async (mediaType: MediaType) => {
-    const media = await prisma.media.findMany({
-      distinct: ["tmdbId"],
-      where: { mediaType },
-      select: { id: true },
-    });
-    return media.length;
+    return await prisma.media.count({ where: { mediaType } });
   };
 }

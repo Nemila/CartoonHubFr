@@ -4,7 +4,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Outfit as Font } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const fontSans = Font({
@@ -54,14 +53,7 @@ export default function RootLayout({
           <Navbar />
           <div className="container flex flex-1 flex-col">{children}</div>
           <Footer />
-
           <Toaster />
-
-          <Script
-            defer
-            src="https://cloud.umami.is/script.js"
-            data-website-id="b332cc33-9bce-4324-8b20-94fd41d923a4"
-          ></Script>
         </body>
       </html>
     </ClerkProvider>

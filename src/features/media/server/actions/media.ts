@@ -120,12 +120,6 @@ export const getMediaDetailsBatch = async (
   return { ...mediaDetails, seasonCount };
 };
 
-export const getMediaCountCached = async (mediaType: MediaType) => {
-  const cacheFn = dbCache(mediaService.countMedia, {
-    tags: [getMediaGlobalTag()],
-  });
-  return cacheFn(mediaType);
-};
 export const getMediaCount = async (mediaType: MediaType) => {
   return await mediaService.countMedia(mediaType);
 };

@@ -18,6 +18,9 @@ import { revalidateTag } from "next/cache";
 
 const mediaService = new MediaService();
 
+export const getPopular = async () => {
+  return mediaService.getPopular();
+};
 export const getPopularCached = async () => {
   return dbCache(mediaService.getPopular, { tags: [getMediaGlobalTag()] })();
 };

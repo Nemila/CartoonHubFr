@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const DonationCard = () => {
   const [goal] = useState(200);
-  const [totalContributions] = useState(0);
+  const [totalContributions] = useState(1);
   const [progress] = useState((totalContributions * 100) / goal);
 
   return (

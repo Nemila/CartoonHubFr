@@ -1,9 +1,6 @@
-import MediaCard from "@/features/media/components/MediaCard";
 import { Input } from "@/components/ui/input";
-import {
-  searchMedia,
-  searchMediaCached,
-} from "@/features/media/server/actions/media";
+import MediaCard from "@/features/media/components/MediaCard";
+import { searchMedia } from "@/features/media/server/actions/media";
 
 type Props = {
   searchParams: Promise<{

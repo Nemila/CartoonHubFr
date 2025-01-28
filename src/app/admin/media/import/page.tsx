@@ -39,7 +39,9 @@ const ImportPage = async ({ searchParams }: Props) => {
 
       <div className="ml-auto flex gap-2">
         <Button variant={"secondary"} asChild>
-          <Link href={`?page=${pageNumber - 1}`}>Previous</Link>
+          <Link prefetch={false} href={`?page=${pageNumber - 1}`}>
+            Previous
+          </Link>
         </Button>
 
         {fileList && (
@@ -88,7 +90,9 @@ const ImportPage = async ({ searchParams }: Props) => {
         )}
 
         <Button variant={"secondary"} asChild>
-          <Link href={`?page=${pageNumber + 1}`}>Next</Link>
+          <Link prefetch={false} href={`?page=${pageNumber + 1}`}>
+            Next
+          </Link>
         </Button>
       </div>
 
@@ -126,11 +130,15 @@ const ImportPage = async ({ searchParams }: Props) => {
 
       <div className="ml-auto flex gap-2">
         <Button variant={"secondary"} asChild>
-          <Link href={`?page=${pageNumber - 1}`}>Previous</Link>
+          <Link prefetch={false} href={`?page=${pageNumber - 1}`}>
+            Previous
+          </Link>
         </Button>
 
         <Button variant={"secondary"} asChild>
-          <Link href={`?page=${pageNumber + 1}`}>Next</Link>
+          <Link prefetch={false} href={`?page=${pageNumber + 1}`}>
+            Next
+          </Link>
         </Button>
       </div>
     </div>

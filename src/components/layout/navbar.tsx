@@ -15,7 +15,7 @@ const Navbar = () => {
   return (
     <nav className="sticky left-0 top-0 z-10 flex w-full items-center justify-center border-b bg-card">
       <div className="container flex h-16 items-center justify-between gap-4">
-        <Link href={"/"}>
+        <Link prefetch={false} href={"/"}>
           <Image
             priority
             alt="logo"
@@ -40,15 +40,21 @@ const Navbar = () => {
 
           <div className="flex shrink-0 gap-2">
             <Button variant={"ghost"} asChild>
-              <Link href={"/"}>Accueil</Link>
+              <Link prefetch={false} href={"/"}>
+                Accueil
+              </Link>
             </Button>
 
             <Button variant={"ghost"} asChild>
-              <Link href={"/catalogue"}>Catalogue</Link>
+              <Link prefetch={false} href={"/catalogue"}>
+                Catalogue
+              </Link>
             </Button>
 
             <Button variant={"ghost"} asChild>
-              <Link href={"https://discord.gg/M7gRTuXc6d"}>Communauté</Link>
+              <Link prefetch={false} href={"https://discord.gg/M7gRTuXc6d"}>
+                Communauté
+              </Link>
             </Button>
 
             <SignedOut>
@@ -68,7 +74,7 @@ const Navbar = () => {
         {/* MOBILE NAVIGATION */}
         <div className="flex gap-2 lg:hidden">
           <Button asChild variant={"ghost"} size={"icon"}>
-            <Link href="/search" prefetch={false}>
+            <Link prefetch={false} href="/search">
               <Search className="size-6" />
             </Link>
           </Button>

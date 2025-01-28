@@ -12,7 +12,7 @@ type Props = {
 
 const EpisodeCard = ({ episode, currentEpisode }: Props) => {
   return (
-    <Link href={String(episode.number)}>
+    <Link prefetch={false} href={String(episode.number)}>
       <Card
         className={cn(
           "group flex h-28 overflow-hidden bg-stone-800",

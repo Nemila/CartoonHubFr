@@ -6,7 +6,10 @@ import Image from "next/image";
 type Props = { media: Media; seasonNumber: number };
 const SeasonCard = ({ media, seasonNumber }: Props) => {
   return (
-    <Link href={`/${media.mediaType}/${media.tmdbId}/${media.season}/1`}>
+    <Link
+      prefetch={false}
+      href={`/${media.mediaType}/${media.tmdbId}/${media.season}/1`}
+    >
       <Card className="group relative h-24 overflow-hidden transition-all">
         <Image
           className="left-0 top-0 size-full object-cover object-center transition-all group-hover:scale-110"

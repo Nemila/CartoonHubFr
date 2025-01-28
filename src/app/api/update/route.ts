@@ -1,7 +1,9 @@
 import MediaService from "@/features/media/server/db/media";
 import prisma from "@/lib/prisma";
+import { unstable_noStore } from "next/cache";
 
 export const GET = async () => {
+  unstable_noStore();
   const perPage = 21;
   const totalMedia = 21 | 4571;
   const pages = Math.floor(totalMedia / perPage);

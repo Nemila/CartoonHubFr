@@ -1,5 +1,4 @@
 import { MediaType } from "@prisma/client";
-import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
@@ -12,8 +11,6 @@ export const dbCache = <T extends (...args: any[]) => Promise<any>>(
   cb: Parameters<typeof unstable_cache<T>>[0],
   { tags, revalidate }: { tags: string[]; revalidate?: number },
 ) => {
-  // TODO: REMOVE
-  console.log(JSON.stringify(cb));
   return cache(
     unstable_cache<T>(cb, undefined, {
       tags: [...tags, "*"],

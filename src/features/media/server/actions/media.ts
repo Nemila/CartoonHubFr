@@ -68,7 +68,7 @@ export const searchMedia = async (query?: string) => {
   return mediaService.search(query);
 };
 
-export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
+export const getMediaDetails = async (payload: GetMediaDetailsType) => {
   const valid = getMediaDetailsSchema.parse(payload);
   const mediaFn = dbCache(mediaService.getDetails, {
     tags: [
@@ -87,7 +87,7 @@ export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
 export const getMediaDetailsBatch = async (
   payload: GetMediaDetailsBatchType,
 ) => {
-  const mediaDetails = await getMediaDetailsCached({
+  const mediaDetails = await getMediaDetails({
     episode: payload.episode,
     mediaType: payload.mediaType,
     season: payload.season,
@@ -98,6 +98,19 @@ export const getMediaDetailsBatch = async (
     payload.tmdbId,
   );
   return { ...mediaDetails, seasonCount };
+};
+
+export const getMediaDetailsBatchCached = async (
+  payload: GetMediaDetailsBatchType,
+) => {
+  const cacheFn = dbCache(getMediaDetailsBatch, {
+    tags: [
+      getMediaGlobalTag(),
+      getMediaTypeTag(payload.mediaType),
+      getMediaTmdbIdTag(payload.mediaType, payload.tmdbId),
+    ],
+  });
+  return cacheFn(payload);
 };
 
 export const getMediaCount = async (mediaType: MediaType) => {

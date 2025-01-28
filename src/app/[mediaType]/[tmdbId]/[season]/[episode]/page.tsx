@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
 import SeasonCard from "@/features/media/components/SeasonCard";
-import { getMediaDetailsBatch } from "@/features/media/server/actions/media";
+import {
+  getMediaDetailsBatch,
+  getMediaDetailsBatchCached,
+} from "@/features/media/server/actions/media";
 import { checkRole } from "@/server/roles";
 import { MediaType } from "@prisma/client";
 import { ArrowLeftRight } from "lucide-react";
@@ -50,7 +53,7 @@ export async function generateMetadata(
 
 const WatchPage = async ({ params }: Props) => {
   const { mediaType, tmdbId, episode: episodeNumber, season } = await params;
-  const data = await getMediaDetailsBatch({
+  const data = await getMediaDetailsBatchCached({
     mediaType: mediaType as MediaType,
     episode: Number(episodeNumber),
     season: Number(season),

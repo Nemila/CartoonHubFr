@@ -1,4 +1,5 @@
 "use server";
+import { getGenresCached } from "@/features/genres/server/actions/genre";
 import {
   editMediaSchema,
   EditMediaType,
@@ -6,13 +7,15 @@ import {
   getMediaDetailsSchema,
 } from "@/features/media/schemas/media";
 import MediaService from "@/features/media/server/db/media";
+import { getNetworksCached } from "@/features/networks/server/actions/network";
+import { getWatchProvidersCached } from "@/features/watchProviders/server/actions/watchProvider";
 import {
   getMediaGlobalTag,
   getMediaIdTag,
   getMediaTmdbIdTag,
   getMediaTypeTag,
 } from "@/lib/cache";
-import { dbCache } from "@/lib/utils";
+import { ChangePageType, dbCache } from "@/lib/utils";
 import { MediaType } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 
@@ -28,45 +31,42 @@ export const getRecentUpdatesCached = async () => {
   })();
 };
 
-export const getPaginatedMediaCached = async (payload: {
-  page: number;
-  genreIds: string;
-  networkIds: string;
-  watchProviderIds: string;
-  mediaType: "series" | "movies" | "any";
-  orderBy: "popularity" | "latest" | "rating";
-}) => {
+export const getCatalogue = async (payload: ChangePageType) => {
   const networks =
-    payload.networkIds === "any" ? [] : payload.networkIds.split(",");
-  const genres = payload.genreIds === "any" ? [] : payload.genreIds.split(",");
+    payload.networks === "any" ? [] : payload.networks.split(",");
+  const genres = payload.genres === "any" ? [] : payload.genres.split(",");
   const watchProviders =
-    payload.watchProviderIds === "any"
-      ? []
-      : payload.watchProviderIds.split(",");
+    payload.watchProviders === "any" ? [] : payload.watchProviders.split(",");
 
   const cacheFn = dbCache(mediaService.findPaginated, {
     tags: ["medias", `getPaginated-${payload.page}`],
   });
-
-  return cacheFn(payload.page, {
+  const results = await cacheFn(payload.page, {
     genreIds: genres,
     networkIds: networks,
     watchProviderIds: watchProviders,
     orderBy: payload.orderBy,
     mediaType: payload.mediaType,
   });
+
+  const [networkList, genreList, watchProviderList] = await Promise.all([
+    getNetworksCached(),
+    getGenresCached(),
+    getWatchProvidersCached(),
+  ]);
+
+  return {
+    results,
+    networks: networkList,
+    genres: genreList,
+    watchProviders: watchProviderList,
+  };
 };
 
 export const searchMedia = async (query?: string) => {
   if (!query) return [];
   return mediaService.search(query);
 };
-
-// export const searchMediaCached = async (query?: string) => {
-//   if (!query) return [];
-//   const cacheFn = dbCache(mediaService.search, { tags: [getMediaGlobalTag()] });
-//   return cacheFn(query);
-// };
 
 export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
   const valid = getMediaDetailsSchema.parse(payload);

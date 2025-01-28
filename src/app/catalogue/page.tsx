@@ -6,12 +6,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { getGenresCached } from "@/features/genres/server/actions/genre";
 import FilterForm from "@/features/media/components/forms/MediaFilterForm";
 import MediaCard from "@/features/media/components/MediaCard";
-import { getPaginatedMediaCached } from "@/features/media/server/actions/media";
-import { getNetworksCached } from "@/features/networks/server/actions/network";
-import { getWatchProvidersCached } from "@/features/watchProviders/server/actions/watchProvider";
+import { getCatalogue } from "@/features/media/server/actions/media";
 import { changePage, changePageSchema, cn } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -20,31 +17,25 @@ type Props = { searchParams: Promise<{ page?: string; orderBy?: string }> };
 
 const MediaPage = async ({ searchParams }: Props) => {
   const valid = changePageSchema.safeParse(await searchParams);
-  if (!valid.success) return redirect(changePage());
+  if (!valid.success) redirect(changePage());
   const params = valid.data;
 
-  const data = await getPaginatedMediaCached({
-    watchProviderIds: params.watchProviders,
-    networkIds: params.networks,
+  const data = await getCatalogue({
+    watchProviders: params.watchProviders,
+    networks: params.networks,
     orderBy: params.orderBy,
-    genreIds: params.genres,
+    genres: params.genres,
     mediaType: params.mediaType,
     page: params.page,
   });
   if (!data) return notFound();
 
-  const [networks, genres, watchProviders] = await Promise.all([
-    getNetworksCached(),
-    getGenresCached(),
-    getWatchProvidersCached(),
-  ]);
-
   return (
     <main className="flex flex-col gap-4 py-4">
       <FilterForm
-        watchProviders={watchProviders}
-        networks={networks}
-        genres={genres}
+        watchProviders={data.watchProviders}
+        networks={data.networks}
+        genres={data.genres}
       />
 
       <div className="flex flex-1 flex-col gap-2">
@@ -87,7 +78,7 @@ const MediaPage = async ({ searchParams }: Props) => {
       </div>
 
       <div className="cartoon-grid">
-        {data.map((item) => (
+        {data.results.map((item) => (
           <MediaCard key={item.id} data={item} />
         ))}
       </div>
@@ -108,7 +99,7 @@ const MediaPage = async ({ searchParams }: Props) => {
             <PaginationLink>{params.page}</PaginationLink>
           </PaginationItem>
 
-          {data.length >= 24 && (
+          {data.results.length >= 24 && (
             <PaginationItem>
               <PaginationNext
                 href={changePage({

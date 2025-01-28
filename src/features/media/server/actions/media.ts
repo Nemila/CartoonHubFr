@@ -38,10 +38,7 @@ export const getCatalogue = async (payload: ChangePageType) => {
   const watchProviders =
     payload.watchProviders === "any" ? [] : payload.watchProviders.split(",");
 
-  const cacheFn = dbCache(mediaService.findPaginated, {
-    tags: ["medias", `getPaginated-${payload.page}`],
-  });
-  const results = await cacheFn(payload.page, {
+  const results = await mediaService.findPaginated(payload.page, {
     genreIds: genres,
     networkIds: networks,
     watchProviderIds: watchProviders,
@@ -61,6 +58,12 @@ export const getCatalogue = async (payload: ChangePageType) => {
     genres: genreList,
     watchProviders: watchProviderList,
   };
+};
+export const getCatalogueCached = async (payload: ChangePageType) => {
+  const cacheFn = dbCache(getCatalogue, {
+    tags: ["medias", `getPaginated-${payload.page}`],
+  });
+  return cacheFn(payload);
 };
 
 export const searchMedia = async (query?: string) => {

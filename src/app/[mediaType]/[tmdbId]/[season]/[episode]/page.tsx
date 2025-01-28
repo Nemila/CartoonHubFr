@@ -6,8 +6,8 @@ import { Card } from "@/components/ui/card";
 import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
 import SeasonCard from "@/features/media/components/SeasonCard";
 import {
-  getMediaDetailsBatch,
   getMediaDetailsBatchCached,
+  getPopularCached,
 } from "@/features/media/server/actions/media";
 import { checkRole } from "@/server/roles";
 import { MediaType } from "@prisma/client";
@@ -27,13 +27,26 @@ type Props = {
   }>;
 };
 
+export const revalidate = 259200;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const media = await getPopularCached();
+  return media.map((item) => ({
+    tmdbId: String(item.tmdbId),
+    mediaType: item.mediaType,
+    season: String(item.season),
+    episode: "1",
+  }));
+}
+
 export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { mediaType, tmdbId, episode, season } = await params;
 
-  const data = await getMediaDetailsBatch({
+  const data = await getMediaDetailsBatchCached({
     mediaType: mediaType as MediaType,
     episode: Number(episode),
     season: Number(season),

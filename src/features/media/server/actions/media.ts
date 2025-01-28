@@ -56,6 +56,11 @@ export const getPaginatedMediaCached = async (payload: {
   });
 };
 
+export const searchMedia = async (query?: string) => {
+  if (!query) return [];
+  return mediaService.search(query);
+};
+
 export const searchMediaCached = async (query?: string) => {
   if (!query) return [];
   const cacheFn = dbCache(mediaService.search, { tags: [getMediaGlobalTag()] });
@@ -75,6 +80,14 @@ export const getCachedSeasons = async (
   });
   return cacheFn(mediaType, tmdbId);
 };
+export const getMediaDetails = async (payload: GetMediaDetailsType) => {
+  const valid = getMediaDetailsSchema.parse(payload);
+  const media = await mediaService.getDetails(valid);
+  if (!media) throw new Error("Media not found");
+  const episodeFound = media.episodes.find((i) => i.number === valid.episode);
+  const episode = episodeFound || media.episodes[0];
+  return { episode, payload: valid, media };
+};
 export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
   const valid = getMediaDetailsSchema.parse(payload);
   const mediaFn = dbCache(mediaService.getDetails, {
@@ -90,16 +103,20 @@ export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
   const episode = episodeFound || media.episodes[0];
   return { episode, payload: valid, media };
 };
+
 export const getMediaDetailsBatch = async (
   payload: GetMediaDetailsBatchType,
 ) => {
-  const mediaDetails = await getMediaDetailsCached({
+  const mediaDetails = await getMediaDetails({
     episode: payload.episode,
     mediaType: payload.mediaType,
     season: payload.season,
     tmdbId: payload.tmdbId,
   });
-  const seasonCount = await getCachedSeasons(payload.mediaType, payload.tmdbId);
+  const seasonCount = await mediaService.getSeasons(
+    payload.mediaType,
+    payload.tmdbId,
+  );
   return { ...mediaDetails, seasonCount };
 };
 

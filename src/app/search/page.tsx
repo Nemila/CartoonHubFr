@@ -1,6 +1,9 @@
 import MediaCard from "@/features/media/components/MediaCard";
 import { Input } from "@/components/ui/input";
-import { searchMediaCached } from "@/features/media/server/actions/media";
+import {
+  searchMedia,
+  searchMediaCached,
+} from "@/features/media/server/actions/media";
 
 type Props = {
   searchParams: Promise<{
@@ -10,7 +13,7 @@ type Props = {
 
 const SearchPage = async ({ searchParams }: Props) => {
   const { query } = await searchParams;
-  const data = await searchMediaCached(query);
+  const data = await searchMedia(query);
 
   return (
     <main className="flex flex-col gap-4 py-4">

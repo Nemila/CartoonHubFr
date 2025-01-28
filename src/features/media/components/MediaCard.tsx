@@ -1,4 +1,3 @@
-"use client";
 import { Media } from "@prisma/client";
 import { Star } from "lucide-react";
 import Image from "next/image";

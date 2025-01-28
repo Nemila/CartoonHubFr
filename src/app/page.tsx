@@ -4,7 +4,6 @@ import { getPopularCached } from "@/features/media/server/actions/media";
 
 const Home = async () => {
   const data = await getPopularCached();
-
   return (
     <main className="flex flex-col gap-8 py-8">
       <DonationCard />

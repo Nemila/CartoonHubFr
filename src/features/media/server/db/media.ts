@@ -10,14 +10,7 @@ import {
 } from "@/features/media/schemas/media";
 
 export default class MediaService {
-  findMany = async (payload: Prisma.MediaFindManyArgs) => {
-    return await prisma.media.findMany({
-      where: payload?.where,
-      take: payload?.take || 24,
-      skip: payload?.skip,
-      orderBy: payload?.orderBy || { popularity: "desc" },
-    });
-  };
+  defaultLimit = 36;
 
   getPopular = async () => {
     return await prisma.media.findMany({
@@ -28,16 +21,9 @@ export default class MediaService {
   };
 
   getRecentUpdates = async () => {
-    return await this.findMany({
-      distinct: ["originalTitle"],
+    return await prisma.media.findMany({
       orderBy: { createdAt: "desc" },
-    });
-  };
-
-  findManyByTmdbIds = async (tmdbIds: number[]) => {
-    return await this.findMany({
-      distinct: ["originalTitle"],
-      where: { tmdbId: { in: tmdbIds } },
+      take: 36,
     });
   };
 
@@ -79,11 +65,9 @@ export default class MediaService {
       mediaType: "series" | "movies" | "any";
     },
   ) => {
-    const defaultLimit = 24;
-    return await this.findMany({
-      skip: (page - 1) * defaultLimit,
-      distinct: ["originalTitle"],
-      take: defaultLimit,
+    return await prisma.media.findMany({
+      skip: (page - 1) * this.defaultLimit,
+      take: this.defaultLimit,
       where: {
         ...(filter.mediaType !== "any" && {
           mediaType: filter.mediaType,
@@ -115,7 +99,7 @@ export default class MediaService {
     });
   };
 
-  search = async (query: string, limit: number = 24): Promise<Media[]> => {
+  search = async (query: string, limit: number = 36): Promise<Media[]> => {
     const results = await prisma.media.aggregateRaw({
       pipeline: [
         {
@@ -390,7 +374,7 @@ export default class MediaService {
 
   findUnique = async (payload: CreateMediaType) => {
     return await prisma.media.findUnique({
-      where: { mediaType_tmdbId_season: { ...payload } },
+      where: { mediaType_tmdbId_season: payload },
     });
   };
 

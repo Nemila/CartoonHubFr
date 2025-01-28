@@ -18,9 +18,6 @@ import { revalidateTag } from "next/cache";
 
 const mediaService = new MediaService();
 
-export const getPopular = async () => {
-  return mediaService.getPopular();
-};
 export const getPopularCached = async () => {
   return dbCache(mediaService.getPopular, { tags: [getMediaGlobalTag()] })();
 };
@@ -47,7 +44,11 @@ export const getPaginatedMediaCached = async (payload: {
       ? []
       : payload.watchProviderIds.split(",");
 
-  return await mediaService.findPaginated(payload.page, {
+  const cacheFn = dbCache(mediaService.findPaginated, {
+    tags: ["medias", `getPaginated-${payload.page}`],
+  });
+
+  return cacheFn(payload.page, {
     genreIds: genres,
     networkIds: networks,
     watchProviderIds: watchProviders,
@@ -61,33 +62,12 @@ export const searchMedia = async (query?: string) => {
   return mediaService.search(query);
 };
 
-export const searchMediaCached = async (query?: string) => {
-  if (!query) return [];
-  const cacheFn = dbCache(mediaService.search, { tags: [getMediaGlobalTag()] });
-  return cacheFn(query);
-};
+// export const searchMediaCached = async (query?: string) => {
+//   if (!query) return [];
+//   const cacheFn = dbCache(mediaService.search, { tags: [getMediaGlobalTag()] });
+//   return cacheFn(query);
+// };
 
-export const getCachedSeasons = async (
-  mediaType: MediaType,
-  tmdbId: number,
-) => {
-  const cacheFn = dbCache(mediaService.getSeasons, {
-    tags: [
-      getMediaGlobalTag(),
-      getMediaTypeTag(mediaType),
-      getMediaTmdbIdTag(mediaType, tmdbId),
-    ],
-  });
-  return cacheFn(mediaType, tmdbId);
-};
-export const getMediaDetails = async (payload: GetMediaDetailsType) => {
-  const valid = getMediaDetailsSchema.parse(payload);
-  const media = await mediaService.getDetails(valid);
-  if (!media) throw new Error("Media not found");
-  const episodeFound = media.episodes.find((i) => i.number === valid.episode);
-  const episode = episodeFound || media.episodes[0];
-  return { episode, payload: valid, media };
-};
 export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
   const valid = getMediaDetailsSchema.parse(payload);
   const mediaFn = dbCache(mediaService.getDetails, {
@@ -107,7 +87,7 @@ export const getMediaDetailsCached = async (payload: GetMediaDetailsType) => {
 export const getMediaDetailsBatch = async (
   payload: GetMediaDetailsBatchType,
 ) => {
-  const mediaDetails = await getMediaDetails({
+  const mediaDetails = await getMediaDetailsCached({
     episode: payload.episode,
     mediaType: payload.mediaType,
     season: payload.season,
@@ -129,9 +109,6 @@ export const findMediaByIdCached = async (id: string) => {
     tags: [getMediaGlobalTag(), getMediaIdTag(id)],
   });
   return cacheFn(id);
-};
-export const findMediaById = async (id: string) => {
-  return await mediaService.findById(id);
 };
 
 export const editMedia = async (payload: EditMediaType) => {

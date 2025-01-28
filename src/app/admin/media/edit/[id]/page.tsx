@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import EditMediaForm from "@/features/media/components/forms/EditMediaForm";
-import { findMediaById } from "@/features/media/server/actions/media";
+import { findMediaByIdCached } from "@/features/media/server/actions/media";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 
 const EditMediaPage = async ({ params }: Props) => {
   const { id } = await params;
-  const media = await findMediaById(id);
+  const media = await findMediaByIdCached(id);
   if (!media) notFound();
 
   return (

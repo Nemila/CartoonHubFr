@@ -1,4 +1,3 @@
-"use client";
 import MobileNavbar from "@/components/layout/mobile-navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +68,7 @@ const Navbar = () => {
         {/* MOBILE NAVIGATION */}
         <div className="flex gap-2 lg:hidden">
           <Button asChild variant={"ghost"} size={"icon"}>
-            <Link href="/search">
+            <Link href="/search" prefetch={false}>
               <Search className="size-6" />
             </Link>
           </Button>

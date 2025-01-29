@@ -8,7 +8,7 @@ const SeasonCard = ({ media, seasonNumber }: Props) => {
   return (
     <Link
       prefetch={false}
-      href={`/${media.mediaType}/${media.tmdbId}/${media.season}/1`}
+      href={`/${media.mediaType}/${media.tmdbId}/${seasonNumber}/1`}
     >
       <Card className="group relative h-24 overflow-hidden transition-all">
         <Image

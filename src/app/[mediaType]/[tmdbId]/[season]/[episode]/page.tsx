@@ -150,6 +150,7 @@ const WatchPage = async ({ params }: Props) => {
               {isStaff && (
                 <Button variant={"outline"} asChild>
                   <Link
+                    prefetch={false}
                     href={`/admin/media/edit/${media.id}?ep=${episode?.id}`}
                   >
                     Modifier

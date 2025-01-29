@@ -42,6 +42,7 @@ const MediaPage = async ({ searchParams }: Props) => {
         <p className="text-4xl font-bold">Catalogue</p>
         <div className="flex items-center gap-4 text-sm md:text-base">
           <Link
+            prefetch={false}
             href={changePage({
               ...params,
               orderBy: "popularity",
@@ -53,6 +54,7 @@ const MediaPage = async ({ searchParams }: Props) => {
             Populaires
           </Link>
           <Link
+            prefetch={false}
             href={changePage({
               ...params,
               orderBy: "rating",
@@ -64,6 +66,7 @@ const MediaPage = async ({ searchParams }: Props) => {
             Mieux Notes
           </Link>
           <Link
+            prefetch={false}
             href={changePage({
               ...params,
               orderBy: "latest",

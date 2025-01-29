@@ -7,9 +7,9 @@ type Props = { data: Media };
 const MediaCard = ({ data }: Props) => {
   return (
     <Link
+      prefetch={false}
       className="flex flex-col gap-2"
       href={`/${data.mediaType}/${data.tmdbId}/${data.season}/1`}
-      prefetch={false}
     >
       <div className="group aspect-[3/4.5] w-full overflow-hidden rounded-md">
         <Image

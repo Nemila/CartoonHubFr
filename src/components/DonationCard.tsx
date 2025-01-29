@@ -57,7 +57,7 @@ const DonationCard = () => {
 
         <div className="mt-auto flex gap-4">
           <Button size={"lg"} className="flex-1 font-semibold" asChild>
-            <Link href="https://discord.gg/M7gRTuXc6d">
+            <Link href="https://discord.com/invite/2Cj7ATwvQT">
               Rejoindre la communauté
             </Link>
           </Button>

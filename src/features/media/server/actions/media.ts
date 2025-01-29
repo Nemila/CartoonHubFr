@@ -120,7 +120,7 @@ export const getMediaCount = async (mediaType: MediaType) => {
   return await mediaService.countMedia(mediaType);
 };
 
-export const findMediaByIdCached = async (id: string) => {
+export const findMediaByIdCached = async (id: number) => {
   const cacheFn = dbCache(mediaService.findById, {
     tags: [getMediaGlobalTag(), getMediaIdTag(id)],
   });

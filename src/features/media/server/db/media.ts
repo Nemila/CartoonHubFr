@@ -118,6 +118,7 @@ export default class MediaService {
     const typedResults = results as unknown as (Media & {
       _id: { $oid: string };
     })[];
+
     return typedResults.map((item) => {
       const { _id, ...rest } = item;
       return { ...rest, id: _id.$oid };
@@ -199,9 +200,8 @@ export default class MediaService {
           .filter((item) => item.site.toLowerCase() === "youtube")
           .map((item) => "https://www.youtube.com/watch?v=" + item.key),
       },
-      alternativeTitles: alternativeTitles.titles
-        ?.map((item) => item.title)
-        .join(", "),
+      alternativeTitles:
+        alternativeTitles.titles?.map((item) => item.title) || [],
       genres: {
         connectOrCreate: this.mapGenres(tmdbDetails.genres).map((item) => ({
           where: { tmdbId: item.id },
@@ -356,7 +356,7 @@ export default class MediaService {
   update = async (payload: EditMediaType) => {
     const { id, ...rest } = payload;
     return await prisma.media.update({
-      where: { id: id },
+      where: { id },
       data: rest,
     });
   };
@@ -378,7 +378,7 @@ export default class MediaService {
     });
   };
 
-  findById = async (id: string) => {
+  findById = async (id: number) => {
     return await prisma.media.findUnique({ where: { id } });
   };
 

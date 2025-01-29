@@ -22,13 +22,13 @@ export const importMediaSchema = z.object({
 export type ImportMediaType = z.infer<typeof importMediaSchema>;
 
 export const editMediaSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   tmdbId: z.number(),
   imdbId: z.string(),
   season: z.coerce.number(),
   title: z.string(),
   originalTitle: z.string(),
-  alternativeTitles: z.string().optional(),
+  alternativeTitles: z.string().array(),
   overview: z.string().optional(),
   releaseDate: z.string().optional(),
   posterPath: z.string().optional(),

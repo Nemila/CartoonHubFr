@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -13,157 +13,116 @@ enum MediaType {
 }
 
 model Media {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  tmdbId Int
-  imdbId String?
-  season Int
-
-  backdropImages String[]
-  posterImages   String[]
-  videos         String[]
-
+  id                Int             @id @default(autoincrement())
+  tmdbId            Int
+  season            Int
+  imdbId            String?
+  backdropImages    String[]
+  posterImages      String[]
+  videos            String[]
   title             String
   originalTitle     String
-  alternativeTitles String?
-
-  overview     String
-  releaseDate  String
-  posterPath   String?
-  backdropPath String?
-  status       String?
-
-  mediaType MediaType
-  episodes  Episode[]
-
-  popularity Float   @default(0.0) @db.Double
-  rating     Float   @default(0.0) @db.Double
-  adult      Boolean @default(false)
-  tagline    String?
-
-  watchProviderIds String[]        @db.ObjectId
-  watchProviders   WatchProvider[] @relation(fields: [watchProviderIds], references: [id])
-
-  genreIds String[] @db.ObjectId
-  genres   Genre[]  @relation(fields: [genreIds], references: [id])
-
-  networks   Network[] @relation(fields: [networkIds], references: [id])
-  networkIds String[]  @db.ObjectId
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  alternativeTitles String[]
+  overview          String
+  releaseDate       String
+  posterPath        String?
+  backdropPath      String?
+  status            String?
+  popularity        Float           @default(0)
+  rating            Float           @default(0)
+  adult             Boolean         @default(false)
+  tagline           String?
+  mediaType         MediaType
+  genres            Genre[]
+  episodes          Episode[]
+  networks          Network[]
+  watchProviders    WatchProvider[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @default(now()) @updatedAt
 
   @@unique([mediaType, tmdbId, season])
-  @@index([mediaType])
 }
 
 model Episode {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  season Int
-  number Int
-
-  runtime Int   @default(0)
-  rating  Float @default(0.0) @db.Double
-
-  title       String
+  id          Int      @id @default(autoincrement())
+  season      Int
+  number      Int
+  runtime     Int      @default(0)
+  rating      Float    @default(0)
+  title       String?
   releaseDate String?
   description String?
   stillPath   String?
-
-  mediaId String   @db.ObjectId
-  media   Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  players Player[]
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  mediaId     Int
+  media       Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  players     Player[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   @@unique([mediaId, season, number])
 }
 
 model Player {
-  id  String @id @default(auto()) @map("_id") @db.ObjectId
-  url String @unique
-
-  languageName String
-  language     Language @relation(fields: [languageName], references: [name], onDelete: Cascade)
-
-  episodeId String  @db.ObjectId
-  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-
+  id            Int       @id @default(autoincrement())
+  url           String    @unique
+  languageName  String
+  language      Language  @relation(fields: [languageName], references: [name], onDelete: Cascade)
+  episodeId     Int
+  episode       Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
   videoHostName String
   videoHost     VideoHost @relation(fields: [videoHostName], references: [name], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
-
-  @@index([languageName])
-  @@index([videoHostName])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 }
 
 model VideoHost {
-  id   String  @id @default(auto()) @map("_id") @db.ObjectId
-  name String  @unique
-  slug String? @default("")
-
-  priority Int @default(10)
-
-  players Player[]
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  slug      String
+  priority  Int      @default(10)
+  players   Player[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Language {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String   @unique
-  players Player[]
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  players   Player[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Genre {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  tmdbId Int    @unique
-  name   String @unique
-  slug   String @unique
-
-  mediaIds String[] @db.ObjectId
-  media    Media[]  @relation(fields: [mediaIds], references: [id])
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  id        Int      @id @default(autoincrement())
+  tmdbId    Int      @unique
+  name      String   @unique
+  slug      String   @unique
+  media     Media[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model WatchProvider {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  slug   String @unique
-  tmdbId Int    @unique
-
-  name     String
-  logoPath String
-  priority Int
-
-  media    Media[]  @relation(fields: [mediaIds], references: [id])
-  mediaIds String[] @db.ObjectId
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  tmdbId    Int      @unique
+  name      String
+  logoPath  String
+  priority  Int      @default(20)
+  media     Media[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Network {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  slug   String @unique
-  tmdbId Int    @unique
-
-  logoPath String
-  name     String
-  country  String
-
-  media    Media[]  @relation(fields: [mediaIds], references: [id])
-  mediaIds String[] @db.ObjectId
-
-  createdAt DateTime @default(now()) @db.Date
-  updatedAt DateTime @default(now()) @updatedAt @db.Date
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  tmdbId    Int      @unique
+  logoPath  String
+  name      String
+  country   String
+  media     Media[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

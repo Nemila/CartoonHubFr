@@ -141,6 +141,7 @@ const WatchPage = async ({ params }: Props) => {
               <Button variant={"outline"}>Regarder Plus Tard</Button>
               <Button variant={"outline"} asChild>
                 <Link
+                  prefetch={false}
                   href={`https://www.themoviedb.org/${payload.mediaType === "series" ? "tv" : "movie"}/${payload.tmdbId}`}
                 >
                   Noter
@@ -150,6 +151,7 @@ const WatchPage = async ({ params }: Props) => {
               {isStaff && (
                 <Button variant={"outline"} asChild>
                   <Link
+                    prefetch={false}
                     href={`/admin/media/edit/${media.id}?ep=${episode?.id}`}
                   >
                     Modifier

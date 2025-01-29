@@ -6,7 +6,7 @@ export const getMediaTypeTag = (mediaType: MediaType) =>
   `media:${mediaType}` as const;
 export const getMediaTmdbIdTag = (mediaType: MediaType, tmdbId: number) =>
   `media:${mediaType}-${tmdbId}` as const;
-export const getMediaIdTag = (id: string) => `media:${id}` as const;
+export const getMediaIdTag = (id: number) => `media:${id}` as const;
 
 export type ValidTags =
   | ReturnType<typeof getMediaGlobalTag>

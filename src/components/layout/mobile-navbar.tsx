@@ -68,7 +68,7 @@ const MobileNavbar = () => {
             size={"lg"}
             asChild
           >
-            <Link prefetch={false} href={"https://discord.gg/M7gRTuXc6d"}>
+            <Link target="_blank" href={"https://discord.gg/M7gRTuXc6d"}>
               <MessageCircle />
               Communauté
             </Link>

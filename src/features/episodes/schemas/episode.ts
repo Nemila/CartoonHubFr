@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createEpisodeSchema = z.object({
-  mediaId: z.string(),
+  mediaId: z.number(),
   mediaType: z.enum(["series", "movies"]),
   tmdbId: z.number(),
   season: z.number(),

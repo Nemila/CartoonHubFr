@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createEpisode } from "@/features/episodes/server/actions/episode";
-import MediaService from "@/features/media/server/db/media";
+import MediaService from "@/services/media";
 import { checkPlayerExists } from "@/features/players/server/actions/player";
 import {
   getMediaGlobalTag,

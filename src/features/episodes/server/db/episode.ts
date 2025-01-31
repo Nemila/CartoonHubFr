@@ -113,7 +113,7 @@ export class EpisodeService {
     return episodeCreateInput;
   };
 
-  upsert = async (mediaId: string, payload: Prisma.EpisodeCreateInput) => {
+  upsert = async (mediaId: number, payload: Prisma.EpisodeCreateInput) => {
     return await prisma.episode.upsert({
       where: {
         mediaId_season_number: {

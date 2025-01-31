@@ -1,4 +1,4 @@
-import MediaService from "@/features/media/server/db/media";
+import MediaService from "@/services/media";
 import prisma from "@/lib/prisma";
 import { unstable_noStore } from "next/cache";
 

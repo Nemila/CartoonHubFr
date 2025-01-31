@@ -9,11 +9,11 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const dbCache = <T extends (...args: any[]) => Promise<any>>(
   cb: Parameters<typeof unstable_cache<T>>[0],
-  { tags }: { tags: string[] },
+  params?: { tags: string[] },
 ) => {
   return cache(
     unstable_cache<T>(cb, undefined, {
-      tags: [...tags, "*"],
+      tags: [...(params?.tags || []), "*"],
       revalidate: Number.MAX_SAFE_INTEGER,
     }),
   );

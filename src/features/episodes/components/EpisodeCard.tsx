@@ -23,7 +23,7 @@ const EpisodeCard = ({ episode, currentEpisode }: Props) => {
           <Image
             className="size-full object-cover object-center transition-all group-hover:scale-110"
             src={episode.stillPath || "/no-video.png"}
-            alt={episode.title}
+            alt={episode.title || `Episode ${episode.number}`}
             height={500}
             width={500}
             unoptimized

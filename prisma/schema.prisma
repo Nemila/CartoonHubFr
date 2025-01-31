@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["nativeDistinct", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -7,13 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum MediaType {
-  series
-  movies
-}
-
 model Media {
-  id                Int             @id @default(autoincrement())
   tmdbId            Int
   season            Int
   imdbId            String?
@@ -33,18 +28,18 @@ model Media {
   adult             Boolean         @default(false)
   tagline           String?
   mediaType         MediaType
-  genres            Genre[]
-  episodes          Episode[]
-  networks          Network[]
-  watchProviders    WatchProvider[]
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @default(now()) @updatedAt
+  id                Int             @id @default(autoincrement())
+  episodes          Episode[]
+  genres            Genre[]
+  networks          Network[]
+  watchProviders    WatchProvider[]
 
   @@unique([mediaType, tmdbId, season])
 }
 
 model Episode {
-  id          Int      @id @default(autoincrement())
   season      Int
   number      Int
   runtime     Int      @default(0)
@@ -53,76 +48,82 @@ model Episode {
   releaseDate String?
   description String?
   stillPath   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  id          Int      @id @default(autoincrement())
   mediaId     Int
   media       Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   players     Player[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
 
   @@unique([mediaId, season, number])
 }
 
 model Player {
-  id            Int       @id @default(autoincrement())
   url           String    @unique
   languageName  String
-  language      Language  @relation(fields: [languageName], references: [name], onDelete: Cascade)
-  episodeId     Int
-  episode       Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
   videoHostName String
-  videoHost     VideoHost @relation(fields: [videoHostName], references: [name], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
+  id            Int       @id @default(autoincrement())
+  episodeId     Int
+  episode       Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  language      Language  @relation(fields: [languageName], references: [name], onDelete: Cascade)
+  videoHost     VideoHost @relation(fields: [videoHostName], references: [name], onDelete: Cascade)
 }
 
 model VideoHost {
-  id        Int      @id @default(autoincrement())
   name      String   @unique
-  slug      String
+  slug      String   @unique
   priority  Int      @default(10)
-  players   Player[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  players   Player[]
 }
 
 model Language {
-  id        Int      @id @default(autoincrement())
   name      String   @unique
-  players   Player[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  players   Player[]
 }
 
 model Genre {
-  id        Int      @id @default(autoincrement())
   tmdbId    Int      @unique
   name      String   @unique
   slug      String   @unique
-  media     Media[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  media     Media[]
 }
 
 model WatchProvider {
-  id        Int      @id @default(autoincrement())
   slug      String   @unique
   tmdbId    Int      @unique
-  name      String
+  name      String   @unique
   logoPath  String
   priority  Int      @default(20)
-  media     Media[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  media     Media[]
 }
 
 model Network {
-  id        Int      @id @default(autoincrement())
   slug      String   @unique
   tmdbId    Int      @unique
   logoPath  String
   name      String
   country   String
-  media     Media[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  media     Media[]
+}
+
+enum MediaType {
+  series
+  movies
 }

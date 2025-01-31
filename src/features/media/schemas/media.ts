@@ -38,11 +38,21 @@ export const editMediaSchema = z.object({
 });
 export type EditMediaType = z.infer<typeof editMediaSchema>;
 
+export const orderBySchema = z.enum([
+  "popularity_desc",
+  "populariy_asc",
+  "rating_asc",
+  "rating_desc",
+  "createdAt_desc",
+  "createdAt_asc",
+]);
+export type OrderByType = z.infer<typeof orderBySchema>;
+
 export const filterMediaSchema = z.object({
-  genreIds: z.string().array(),
-  watchProviderIds: z.string().array(),
-  networkIds: z.string().array(),
-  mediaType: z.enum(["any", "movies", "series"]),
+  genres: z.number().array().optional(),
+  watchProviders: z.number().array().optional(),
+  networks: z.number().array().optional(),
+  orderBy: orderBySchema.optional(),
 });
 export type FilterMediaType = z.infer<typeof filterMediaSchema>;
 

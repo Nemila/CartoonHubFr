@@ -53,7 +53,7 @@ const Player = ({
       <div className="flex flex-col gap-2 sm:flex-row">
         <Select
           onValueChange={(value) => setPlayerId(value)}
-          defaultValue={playerId}
+          defaultValue={String(playerId)}
         >
           <SelectTrigger className="flex-1 bg-card capitalize">
             <SelectValue placeholder="Lecteur" />
@@ -61,7 +61,7 @@ const Player = ({
 
           <SelectContent className="capitalize">
             {players.map((item) => (
-              <SelectItem key={item.id} value={item.id}>
+              <SelectItem key={item.id} value={String(item.id)}>
                 {item.videoHostName} (
                 <span className="uppercase">{item.languageName}</span>)
               </SelectItem>

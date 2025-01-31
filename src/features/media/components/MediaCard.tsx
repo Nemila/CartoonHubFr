@@ -1,9 +1,9 @@
-import { Media } from "@prisma/client";
+import { media } from "@/server/db/schema";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = { data: Media };
+type Props = { data: typeof media.$inferSelect };
 const MediaCard = ({ data }: Props) => {
   return (
     <Link

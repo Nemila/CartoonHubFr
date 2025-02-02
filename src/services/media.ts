@@ -10,7 +10,7 @@ import _ from "lodash";
 import { Flatrate, Genre, WatchProviders } from "tmdb-ts";
 
 export default class MediaService {
-  defaultLimit = 15;
+  defaultLimit = 18;
 
   create = async (payload: CreateMediaType) => {
     const createInput =

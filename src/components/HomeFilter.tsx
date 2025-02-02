@@ -14,56 +14,54 @@ const HomeFilter = () => {
 
   return (
     <header className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-      <div className="flex h-12 w-full max-w-sm overflow-hidden rounded-lg border-2">
-        <Button
-          variant={"ghost"}
+      <div className="flex h-12 w-full max-w-xs overflow-hidden rounded-lg border">
+        <button
           className={cn(
-            "h-12 flex-1 rounded-none",
-            orderBy === "popularity" && "text-secondary",
+            "hover:bg-dark-3 focus-visible:bg-dark-3 h-12 flex-1 rounded-none outline-none focus-visible:text-secondary",
+            orderBy === "popularity" && "bg-dark-2 text-secondary",
           )}
           onClick={() => setOrderBy("popularity")}
         >
           Populaire
-        </Button>
+        </button>
 
-        <div className="h-full w-[2px] bg-border"></div>
+        <div className="h-full w-[1px] bg-border"></div>
 
-        <Button
-          variant={"ghost"}
+        <button
           className={cn(
-            "h-12 flex-1 rounded-none",
-            orderBy === "createdAt" && "text-secondary",
+            "hover:bg-dark-3 focus-visible:bg-dark-3 h-12 flex-1 rounded-none outline-none focus-visible:text-secondary",
+            orderBy === "createdAt" && "bg-dark-2 text-secondary",
           )}
           onClick={() => setOrderBy("createdAt")}
         >
           Recent
-        </Button>
+        </button>
       </div>
 
-      <div className="flex h-12 self-end overflow-hidden rounded-lg border-2">
-        <Button
-          size={"icon"}
-          variant={"ghost"}
+      <div className="flex h-12 overflow-hidden rounded-lg border">
+        <button
           disabled={page < 2}
-          className="size-12 shrink-0 rounded-none"
+          className={cn(
+            "hover:bg-dark-3 focus-visible:bg-dark-3 flex h-full w-12 flex-1 shrink-0 items-center justify-center rounded-none outline-none focus-visible:text-secondary disabled:brightness-50",
+          )}
           onClick={() => setPage(page - 1)}
         >
           <ChevronLeft />
-        </Button>
+        </button>
 
-        <div className="flex h-12 w-14 shrink-0 items-center justify-center border-x-2 bg-card">
+        <div className="bg-dark-0 flex h-full w-14 shrink-0 items-center justify-center border-x">
           {page}
         </div>
 
-        <Button
-          size={"icon"}
-          variant={"ghost"}
+        <button
           disabled={page > 5}
-          className="size-12 shrink-0 rounded-none"
+          className={cn(
+            "hover:bg-dark-3 focus-visible:bg-dark-3 flex h-full w-12 flex-1 shrink-0 items-center justify-center rounded-none outline-none focus-visible:text-secondary disabled:brightness-50",
+          )}
           onClick={() => setPage(page + 1)}
         >
           <ChevronRight />
-        </Button>
+        </button>
       </div>
     </header>
   );

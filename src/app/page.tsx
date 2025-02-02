@@ -23,7 +23,7 @@ const Home = async () => {
         <div className="absolute left-0 top-0 flex size-full items-end bg-gradient-to-t from-black to-transparent p-2 md:p-6">
           <div className="flex w-full flex-col justify-between gap-2 md:flex-row md:items-end">
             <div className="flex max-w-lg flex-col gap-2 text-balance">
-              <p className="line-clamp-2 text-3xl font-bold md:text-4xl">
+              <p className="line-clamp-2 text-2xl font-bold md:text-4xl">
                 {trending[1].title} / {trending[1].originalTitle}
               </p>
 
@@ -48,12 +48,12 @@ const Home = async () => {
         </div>
       </div>
 
-      <div className="flex gap-2">
+      {/* <div className="flex gap-2">
         <div className="bg-dark-0 size-24"></div>
         <div className="bg-dark-1 size-24"></div>
         <div className="bg-dark-2 size-24"></div>
         <div className="bg-dark-3 size-24"></div>
-      </div>
+      </div> */}
 
       {/* <DonationCard /> */}
 
@@ -72,7 +72,7 @@ const Home = async () => {
         </div>
 
         <div className="flex w-full flex-col gap-4 md:flex-row lg:max-w-sm lg:flex-col">
-          <Card className="flex w-full flex-col gap-4 border-none p-4">
+          <Card className="flex w-full flex-col gap-2 border-none p-2">
             <div className="text-xl font-bold">Top Airing</div>
 
             <div className="flex flex-col gap-2">
@@ -83,7 +83,7 @@ const Home = async () => {
             </div>
           </Card>
 
-          <Card className="flex w-full flex-col gap-4 border-none p-4">
+          <Card className="flex w-full flex-col gap-2 border-none p-2">
             <div className="text-xl font-bold">Top Airing</div>
 
             <div className="flex flex-col gap-2">

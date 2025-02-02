@@ -118,7 +118,7 @@
 
 @layer utilities {
   .cartoon-grid {
-    @apply grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4;
+    @apply grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2;
   }
 }
 

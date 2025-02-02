@@ -10,7 +10,7 @@ const MediaCard = ({ data }: Props) => {
   return (
     <Link
       prefetch={false}
-      className="group flex flex-col gap-2"
+      className="group flex flex-col gap-2 rounded-md outline-none ring-ring focus-visible:ring-1"
       href={`/${data.mediaType}/${data.tmdbId}/${data.season}?ep=1`}
     >
       <figure className="aspect-[3/4.5] w-full overflow-hidden rounded-md transition-all group-hover:-translate-y-2 group-focus:-translate-y-2">
@@ -31,7 +31,7 @@ const MediaCard = ({ data }: Props) => {
           {data.title}
         </p>
 
-        <div className="mt-1 flex items-center gap-1">
+        <div className="mt-1 flex flex-wrap items-center gap-1">
           <Badge variant={"outline"} className="h-fit px-1.5">
             <Star className="mr-1 size-2.5 fill-white stroke-white" />
             {data.rating.toFixed(0)}

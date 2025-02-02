@@ -8,9 +8,9 @@ const HorizontalCard = () => {
   return (
     <Link
       href={"/"}
-      className="group flex h-[100px] items-center rounded-lg bg-[#141414] transition-all hover:-translate-x-2 focus:-translate-x-2"
+      className="bg-dark-2 group flex h-[100px] items-center rounded-lg outline-none ring-ring transition-all hover:-translate-x-1 hover:ring-1 focus-visible:-translate-x-1 focus-visible:ring-1"
     >
-      <figure className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-lg shadow">
+      <figure className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-lg">
         <Image
           alt="poster"
           title="poster"
@@ -23,8 +23,8 @@ const HorizontalCard = () => {
         />
       </figure>
 
-      <div className="flex flex-col p-4">
-        <p className="line-clamp-2 text-sm font-normal transition-all group-hover:text-[#F6C794] group-focus:text-[#F6C794] md:text-base">
+      <div className="flex h-full flex-col p-2">
+        <p className="line-clamp-2 text-sm font-normal transition-all group-hover:text-secondary group-focus:text-secondary md:text-base">
           The Apothecary Diaries Saison 2
         </p>
 

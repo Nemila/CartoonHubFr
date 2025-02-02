@@ -1,22 +1,16 @@
-import db from "@/db";
-import { media } from "@/db/schema";
 import {
   CreateMediaType,
   EditMediaType,
-  FilterMediaType,
   GetMediaDetailsType,
 } from "@/features/media/schemas/media";
 import prisma from "@/lib/prisma";
 import tmdb, { TMDB_IMAGE_BASE_URL } from "@/lib/tmdb";
-
-import { Media, MediaType, Prisma } from "@prisma/client";
-import { and, desc, eq, SQL } from "drizzle-orm";
+import { media, MediaType, Prisma } from "@prisma/client";
 import _ from "lodash";
 import { Flatrate, Genre, WatchProviders } from "tmdb-ts";
-import { z } from "zod";
 
 export default class MediaService {
-  defaultLimit = 40;
+  defaultLimit = 15;
 
   create = async (payload: CreateMediaType) => {
     const createInput =
@@ -24,138 +18,80 @@ export default class MediaService {
         ? await this.getMovieCreateInput(payload.tmdbId)
         : await this.getSerieCreateInput(payload);
 
-    const results = await db
-      .insert(media)
-      .values(createInput)
-      .onConflictDoUpdate({
-        target: [media.tmdbId, media.mediaType, media.season],
-        set: createInput,
-      })
-      .returning();
-
-    return results[0];
+    return await prisma.media.upsert({
+      where: { mediaType_tmdbId_season: payload },
+      create: createInput,
+      update: createInput,
+    });
   };
 
   update = async (payload: EditMediaType) => {
     const { id, ...updateDate } = payload;
-    const results = await db
-      .update(media)
-      .set({ ...updateDate })
-      .where(and(eq(media.id, id)));
-    return results[0];
+
+    const results = await prisma.media.update({
+      where: { id },
+      data: updateDate,
+    });
+
+    return results;
   };
 
   delete = async (id: number) => {
-    const results = await db.delete(media).where(eq(media.id, id));
-    return results[0];
+    const results = await prisma.media.delete({ where: { id } });
+    return results;
   };
 
   trending = async (payload?: { mediaType: MediaType }) => {
-    const filter = payload?.mediaType
-      ? eq(media.mediaType, payload?.mediaType)
-      : undefined;
-
-    const results = await db
-      .select()
-      .from(media)
-      .where(filter)
-      .orderBy(desc(media.popularity))
-      .limit(this.defaultLimit);
+    const results = await prisma.media.findMany({
+      where: { mediaType: payload?.mediaType },
+      orderBy: { popularity: "desc" },
+      take: this.defaultLimit,
+      distinct: ["originalTitle"],
+    });
 
     return results;
   };
 
   newReleases = async (payload?: { mediaType: MediaType }) => {
-    const filter = payload?.mediaType
-      ? eq(media.mediaType, payload?.mediaType)
-      : undefined;
-
-    const results = await db
-      .select()
-      .from(media)
-      .where(filter)
-      .orderBy(desc(media.createdAt))
-      .limit(this.defaultLimit);
+    const results = await prisma.media.findMany({
+      where: { mediaType: payload?.mediaType },
+      orderBy: { popularity: "desc" },
+      take: this.defaultLimit,
+      distinct: ["createdAt"],
+    });
 
     return results;
   };
 
-  filter = async (payload: FilterMediaType) => {
-    const filters: Prisma.MediaWhereInput[] = [];
-
-    if (payload.genres && payload.genres.length > 0) {
-      filters.push(
-        ...payload.genres.map((genre) => ({
-          genres: { some: { id: genre } },
-        })),
-      );
-    }
-    if (payload.networks && payload.networks.length > 0) {
-      filters.push(
-        ...payload.networks.map((network) => ({
-          networks: { some: { id: network } },
-        })),
-      );
-    }
-    if (payload.watchProviders && payload.watchProviders.length > 0) {
-      filters.push(
-        ...payload.watchProviders.map((watchProvider) => ({
-          watchProviders: { some: { id: watchProvider } },
-        })),
-      );
-    }
-
-    const orderKeySchema = z.enum(["popularity", "rating", "createdAt"]);
-    const orderValueSchema = z.enum(["asc", "desc"]);
-    const orderParts = payload.orderBy?.split("_") || [];
-    const orderKey = orderKeySchema.parse(orderParts[0] || "popularity");
-    const orderValue = orderValueSchema.parse(orderParts[1] || "desc");
-
-    const response = await prisma.media.findMany({
-      where: { AND: filters },
-      orderBy: { [orderKey]: orderValue },
-      take: this.defaultLimit,
-    });
-
-    return response;
-  };
-
   details = async (payload: GetMediaDetailsType) => {
-    return await prisma.media.findUnique({
-      where: {
-        mediaType_tmdbId_season: {
-          mediaType: payload.mediaType,
-          season: payload.season,
-          tmdbId: payload.tmdbId,
-        },
-      },
+    const result = await prisma.media.findUnique({
+      where: { mediaType_tmdbId_season: payload },
       include: {
         genres: true,
         networks: true,
-        watchProviders: {
-          orderBy: { priority: "asc" },
-        },
+        providers: true,
         episodes: {
           orderBy: { number: "asc" },
           include: {
             players: {
-              orderBy: {
-                videoHost: { priority: "asc" },
-                createdAt: "desc",
-              },
+              orderBy: [{ host: { priority: "asc" } }, { updatedAt: "desc" }],
             },
           },
         },
       },
     });
+    return result;
   };
 
-  search = async (query: string): Promise<Media[]> => {
-    const results = await prisma.media.findMany({
-      where: { title: { search: query } },
-      take: this.defaultLimit,
-    });
-    return results;
+  search = async (query: string): Promise<media[]> => {
+    const res = await prisma.$queryRawUnsafe(
+      `SELECT *, GREATEST(SIMILARITY(title, $1), SIMILARITY("originalTitle", $1)) as score FROM media 
+      WHERE SIMILARITY(title, $1) > 0.14 OR SIMILARITY("originalTitle", $1) > 0.14
+      ORDER BY score DESC LIMIT 40`,
+      query,
+    );
+
+    return res as media[];
   };
 
   getUniqueFlatrates = (watchProviders: WatchProviders) => {
@@ -195,53 +131,77 @@ export default class MediaService {
     }));
   };
 
-  getMovieCreateInput = async (
-    tmdbId: number,
-  ): Promise<typeof media.$inferInsert> => {
+  getMovieCreateInput = async (tmdbId: number) => {
     const tmdbDetails = await tmdb.movies.details(tmdbId, undefined, "fr-FR");
     const alternativeTitles = await tmdb.movies.alternativeTitles(tmdbId);
+    const externalIds = await tmdb.movies.externalIds(tmdbId);
     const images = await tmdb.movies.images(tmdbId);
     const videos = await tmdb.movies.videos(tmdbId);
+    const watchProviders = await tmdb.movies.watchProviders(tmdbId);
+    const uniqueFlatrate = this.getUniqueFlatrates(watchProviders);
 
     const mediaCreateInput = {
+      tmdbId,
+      season: 1,
       mediaType: "movies",
       originalTitle: tmdbDetails.original_title,
       overview: tmdbDetails.overview,
       releaseDate: tmdbDetails.release_date,
-      season: 1,
       title: tmdbDetails.title,
-      tmdbId: tmdbDetails.id,
       adult: tmdbDetails.adult,
-      alternativeTitles: alternativeTitles.titles.map((item) => item.title),
-      backdropImages: images.backdrops.map(
-        (item) => TMDB_IMAGE_BASE_URL + item.file_path,
-      ),
-      backdropPath:
-        tmdbDetails.backdrop_path &&
-        TMDB_IMAGE_BASE_URL + tmdbDetails.backdrop_path,
-      imdbId: tmdbDetails.imdb_id,
+      imdbId: externalIds.imdb_id,
       popularity: tmdbDetails.popularity,
-      posterImages: images.posters.map(
-        (item) => TMDB_IMAGE_BASE_URL + item.file_path,
-      ),
+      rating: tmdbDetails.vote_average,
+      backdropPath: tmdbDetails.backdrop_path
+        ? TMDB_IMAGE_BASE_URL + tmdbDetails.backdrop_path
+        : undefined,
       posterPath: tmdbDetails.poster_path
         ? TMDB_IMAGE_BASE_URL + tmdbDetails.poster_path
         : undefined,
-      rating: tmdbDetails.vote_average,
+      backdropImages: images.backdrops.map(
+        (item) => TMDB_IMAGE_BASE_URL + item.file_path,
+      ),
+      posterImages: images.posters.map(
+        (item) => TMDB_IMAGE_BASE_URL + item.file_path,
+      ),
+      videos: {
+        set: videos.results
+          .filter((item) => item.site.toLowerCase() === "youtube")
+          .map((item) => "https://www.youtube.com/watch?v=" + item.key),
+      },
+      alternativeTitles:
+        alternativeTitles.titles?.map((item) => item.title) || [],
+      genres: {
+        connectOrCreate: this.mapGenres(tmdbDetails.genres).map((item) => ({
+          where: { tmdbId: item.id },
+          create: {
+            slug: _.kebabCase(item.name),
+            tmdbId: item.id,
+            name: item.name,
+          },
+        })),
+      },
       status: tmdbDetails.status,
       tagline: tmdbDetails.tagline,
-      videos: videos.results
-        .filter((item) => item.site.toLowerCase() === "youtube")
-        .map((item) => "https://www.youtube.com/watch?v=" + item.key),
-    } satisfies typeof media.$inferInsert;
-
+      providers: {
+        connectOrCreate: uniqueFlatrate.map((item) => ({
+          where: {
+            slug: _.kebabCase(item.provider_name),
+          },
+          create: {
+            logoPath: TMDB_IMAGE_BASE_URL + item.logo_path,
+            name: item.provider_name,
+            slug: _.kebabCase(item.provider_name),
+            priority: item.display_priority,
+            tmdbId: item.provider_id,
+          },
+        })),
+      },
+    } satisfies Prisma.mediaCreateInput;
     return mediaCreateInput;
   };
 
-  getSerieCreateInput = async (payload: {
-    tmdbId: number;
-    season: number;
-  }): Promise<typeof media.$inferInsert> => {
+  getSerieCreateInput = async (payload: { tmdbId: number; season: number }) => {
     const tmdbDetails = await tmdb.tvShows.details(
       payload.tmdbId,
       undefined,
@@ -262,58 +222,102 @@ export default class MediaService {
     const alternativeTitles = await tmdb.tvShows.alternativeTitles(
       payload.tmdbId,
     );
+    const externalIds = await tmdb.tvShows.externalIds(payload.tmdbId);
     const images = await tmdb.tvShows.images(payload.tmdbId);
     const videos = await tmdb.tvShows.videos(payload.tmdbId);
+    const watchProviders = await tmdb.tvShows.watchProviders(payload.tmdbId);
+    const uniqueFlatrate = this.getUniqueFlatrates(watchProviders);
 
     const mediaCreateInput = {
+      tmdbId: payload.tmdbId,
+      season: payload.season,
       mediaType: "series",
+      status: tmdbDetails.status,
+      tagline: tmdbDetails.tagline,
       originalTitle: tmdbDetails.original_name,
       overview: tmdbDetails.overview,
-      releaseDate: tmdbSeason?.air_date || tmdbDetails.first_air_date,
-      season: payload.season,
+      releaseDate: tmdbDetails.first_air_date,
       title: `${tmdbDetails.name} Saison ${payload.season}`,
-      tmdbId: tmdbDetails.id,
-      alternativeTitles: alternativeTitles.titles.map((item) => item.title),
+      imdbId: externalIds.imdb_id,
+      popularity: tmdbDetails.popularity,
+      rating: tmdbDetails.vote_average,
+      posterPath:
+        tmdbSeason?.poster_path || tmdbDetails.poster_path
+          ? TMDB_IMAGE_BASE_URL +
+            (tmdbSeason?.poster_path || tmdbDetails.poster_path)
+          : undefined,
+
+      backdropPath: tmdbDetails.backdrop_path
+        ? TMDB_IMAGE_BASE_URL + tmdbDetails.backdrop_path
+        : undefined,
       backdropImages: images.backdrops.map(
         (item) => TMDB_IMAGE_BASE_URL + item.file_path,
       ),
-      backdropPath:
-        tmdbDetails.backdrop_path &&
-        TMDB_IMAGE_BASE_URL + tmdbDetails.backdrop_path,
-      popularity: tmdbDetails.popularity,
       posterImages: images.posters.map(
         (item) => TMDB_IMAGE_BASE_URL + item.file_path,
       ),
-      posterPath:
-        (tmdbSeason?.poster_path || tmdbDetails.poster_path) &&
-        TMDB_IMAGE_BASE_URL +
-          (tmdbSeason?.poster_path || tmdbDetails.poster_path),
-      rating: tmdbDetails.vote_average,
-      status: tmdbDetails.status,
-      tagline: tmdbDetails.tagline,
-      videos: videos.results
-        .filter((item) => item.site.toLowerCase() === "youtube")
-        .map((item) => "https://www.youtube.com/watch?v=" + item.key),
-    } satisfies typeof media.$inferInsert;
-
+      networks: {
+        connectOrCreate: tmdbDetails.networks.map((item) => ({
+          where: {
+            slug: _.kebabCase(item.name),
+          },
+          create: {
+            country: item.origin_country,
+            logoPath: TMDB_IMAGE_BASE_URL + item.logo_path,
+            name: item.name,
+            tmdbId: item.id,
+            slug: _.kebabCase(item.name),
+          },
+        })),
+      },
+      videos: {
+        set: videos.results
+          .filter((item) => item.site.toLowerCase() === "youtube")
+          .map((item) => "https://www.youtube.com/watch?v=" + item.key),
+      },
+      alternativeTitles:
+        alternativeTitles.titles?.map((item) => item.title) || [],
+      genres: {
+        connectOrCreate: this.mapGenres(tmdbDetails.genres).map((item) => ({
+          where: { tmdbId: item.id },
+          create: {
+            slug: _.kebabCase(item.name),
+            tmdbId: item.id,
+            name: item.name,
+          },
+        })),
+      },
+      providers: {
+        connectOrCreate: uniqueFlatrate.map((item) => ({
+          where: {
+            slug: _.kebabCase(item.provider_name),
+          },
+          create: {
+            logoPath: TMDB_IMAGE_BASE_URL + item.logo_path,
+            name: item.provider_name,
+            priority: item.display_priority,
+            tmdbId: item.provider_id,
+            slug: _.kebabCase(item.provider_name),
+          },
+        })),
+      },
+    } satisfies Prisma.mediaCreateInput;
     return mediaCreateInput;
   };
 
-  seasons = async (mediaType: MediaType, tmdbId: number) => {
-    return await prisma.media.count({ where: { mediaType, tmdbId } });
-  };
-
-  findUnique = async (payload: CreateMediaType) => {
-    return await prisma.media.findUnique({
-      where: { mediaType_tmdbId_season: payload },
+  countSeasons = async (payload: { mediaType: MediaType; tmdbId: number }) => {
+    const count = await prisma.media.findMany({
+      where: {
+        mediaType: payload.mediaType,
+        tmdbId: payload.tmdbId,
+      },
     });
+
+    return count.length;
   };
 
-  findById = async (id: number) => {
-    return await prisma.media.findUnique({ where: { id } });
-  };
-
-  countMedia = async (mediaType: MediaType) => {
-    return await prisma.media.count({ where: { mediaType } });
+  count = async (mediaType: MediaType) => {
+    const count = await prisma.media.count({ where: { mediaType } });
+    return count;
   };
 }

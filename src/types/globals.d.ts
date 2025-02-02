@@ -29,7 +29,6 @@ declare global {
   type GetMediaDetailsType = {
     tmdbId: number;
     season: number;
-    episode: number;
     mediaType: "series" | "movies";
   };
 

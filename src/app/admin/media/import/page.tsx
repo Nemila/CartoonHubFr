@@ -9,15 +9,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createEpisode } from "@/features/episodes/server/actions/episode";
-import MediaService from "@/services/media";
 import { checkPlayerExists } from "@/features/players/server/actions/player";
-import {
-  getMediaGlobalTag,
-  getMediaTmdbIdTag,
-  getMediaTypeTag,
-} from "@/lib/cache";
 import { extractMediaData } from "@/lib/utils";
 import { getFiles } from "@/server/abyss";
+import MediaService from "@/services/media";
 import { revalidateTag } from "next/cache";
 import Link from "next/link";
 
@@ -52,12 +47,12 @@ const ImportPage = async ({ searchParams }: Props) => {
 
               for (const file of fileList.items) {
                 try {
-                  const url = `https://short.ink/${file.slug}`;
+                  const url = `https://playhydrax.com/?v=${file.slug}`;
                   const playerExists = await checkPlayerExists(url);
                   if (playerExists) throw new Error("Player Exists");
                   const extracted = extractMediaData(file.name);
 
-                  const media = await mediaService.addMedia({
+                  const media = await mediaService.create({
                     mediaType: extracted.mediaType,
                     season: extracted.seasonNumber,
                     tmdbId: extracted.tmdbId,
@@ -74,11 +69,9 @@ const ImportPage = async ({ searchParams }: Props) => {
                     url,
                   });
 
-                  revalidateTag(getMediaGlobalTag());
-                  revalidateTag(getMediaTypeTag(media.mediaType));
-                  revalidateTag(
-                    getMediaTmdbIdTag(media.mediaType, media.tmdbId),
-                  );
+                  revalidateTag("/");
+                  revalidateTag("/search");
+                  revalidateTag("/catalogue");
                 } catch (error) {
                   console.error((error as Error).message, file.name);
                 }

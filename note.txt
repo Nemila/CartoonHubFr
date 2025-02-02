@@ -1,0 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;  -- Optional: Improves search by removing accents
+
+CREATE INDEX media_title_trgm_idx ON media USING GIN (title gin_trgm_ops);
+CREATE INDEX media_originalTitle_trgm_idx ON media USING GIN ("originalTitle" gin_trgm_ops);

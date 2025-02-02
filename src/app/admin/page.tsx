@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getMediaCount } from "@/features/media/server/actions/media";
+import { getMediaCount } from "@/actions/media";
 import { clearFullCache } from "@/lib/cache";
 import { Cat, Clapperboard } from "lucide-react";
 

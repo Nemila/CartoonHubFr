@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import EditMediaForm from "@/features/media/components/forms/EditMediaForm";
-import { findMediaByIdCached } from "@/features/media/server/actions/media";
+import { findMediaByIdCached } from "@/actions/media";
 import { notFound } from "next/navigation";
 
 type Props = {

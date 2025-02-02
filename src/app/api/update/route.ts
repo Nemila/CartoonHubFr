@@ -13,7 +13,7 @@ export const GET = async () => {
   for (let i = 0; i < totalMedia; i++) {
     console.log(`Page ${i}/${pages}`);
 
-    const medias = await prisma.media.findMany({
+    const mediaList = await prisma.media.findMany({
       orderBy: { popularity: "desc" },
       skip: i * perPage,
       take: perPage,
@@ -25,15 +25,14 @@ export const GET = async () => {
       },
     });
 
-    for (const media of medias) {
+    for (const media of mediaList) {
       console.log("Updating media", media.title);
 
-      const mediaCreateInput =
-        media.mediaType === "series"
-          ? await mediaService.getSerieCreateInput(media.tmdbId, media.season)
-          : await mediaService.getMovieCreateInput(media.tmdbId);
-
-      const newMedia = await mediaService.upsert(mediaCreateInput);
+      const newMedia = await mediaService.create({
+        mediaType: media.mediaType,
+        season: media.season,
+        tmdbId: media.tmdbId,
+      });
 
       console.log("Media updated", newMedia.title);
     }

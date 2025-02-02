@@ -4,7 +4,6 @@ export const getMediaDetailsSchema = z.object({
   mediaType: z.enum(["series", "movies"]),
   tmdbId: z.coerce.number().min(1),
   season: z.coerce.number(),
-  episode: z.coerce.number(),
 });
 export type GetMediaDetailsType = z.infer<typeof getMediaDetailsSchema>;
 

@@ -1,14 +1,62 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["nativeDistinct", "fullTextSearchPostgres"]
+  previewFeatures = ["fullTextSearchPostgres", "nativeDistinct", "postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgres"
-  url      = env("DATABASE_URL")
+  provider   = "postgres"
+  url        = env("DATABASE_URL")
+  extensions = [pg_trgm]
 }
 
-model Media {
+model episode {
+  season      Int
+  number      Int
+  runtime     Int      @default(0)
+  rating      Float    @default(0)
+  title       String?
+  releaseDate String?
+  description String?
+  stillPath   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  id          Int      @id(map: "Episode_pkey") @default(autoincrement())
+  mediaId     Int
+  media       media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  players     player[]
+
+  @@unique([mediaId, season, number])
+}
+
+model genre {
+  tmdbId    Int      @unique
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  id        Int      @id(map: "Genre_pkey") @default(autoincrement())
+  media     media[]  @relation("genreToMedia")
+}
+
+model host {
+  name      String   @unique(map: "VideoHost_name_key")
+  slug      String   @unique
+  priority  Int      @default(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  id        Int      @id(map: "VideoHost_pkey") @default(autoincrement())
+  players   player[]
+}
+
+model language {
+  name      String   @unique(map: "Language_name_key")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  id        Int      @id(map: "Language_pkey") @default(autoincrement())
+  players   player[]
+}
+
+model media {
   tmdbId            Int
   season            Int
   imdbId            String?
@@ -23,104 +71,57 @@ model Media {
   posterPath        String?
   backdropPath      String?
   status            String?
-  popularity        Float           @default(0)
-  rating            Float           @default(0)
-  adult             Boolean         @default(false)
+  popularity        Float      @default(0)
+  rating            Float      @default(0)
+  adult             Boolean    @default(false)
   tagline           String?
   mediaType         MediaType
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @default(now()) @updatedAt
-  id                Int             @id @default(autoincrement())
-  episodes          Episode[]
-  genres            Genre[]
-  networks          Network[]
-  watchProviders    WatchProvider[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now())
+  id                Int        @id(map: "Media_pkey") @default(autoincrement())
+  episodes          episode[]
+  genres            genre[]    @relation("genreToMedia")
+  networks          network[]  @relation("mediaToNetwork")
+  providers         provider[] @relation("mediaToProvider")
 
   @@unique([mediaType, tmdbId, season])
 }
 
-model Episode {
-  season      Int
-  number      Int
-  runtime     Int      @default(0)
-  rating      Float    @default(0)
-  title       String?
-  releaseDate String?
-  description String?
-  stillPath   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  id          Int      @id @default(autoincrement())
-  mediaId     Int
-  media       Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  players     Player[]
-
-  @@unique([mediaId, season, number])
-}
-
-model Player {
-  url           String    @unique
-  languageName  String
-  videoHostName String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  id            Int       @id @default(autoincrement())
-  episodeId     Int
-  episode       Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  language      Language  @relation(fields: [languageName], references: [name], onDelete: Cascade)
-  videoHost     VideoHost @relation(fields: [videoHostName], references: [name], onDelete: Cascade)
-}
-
-model VideoHost {
-  name      String   @unique
-  slug      String   @unique
-  priority  Int      @default(10)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  id        Int      @id @default(autoincrement())
-  players   Player[]
-}
-
-model Language {
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  id        Int      @id @default(autoincrement())
-  players   Player[]
-}
-
-model Genre {
-  tmdbId    Int      @unique
-  name      String   @unique
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  id        Int      @id @default(autoincrement())
-  media     Media[]
-}
-
-model WatchProvider {
-  slug      String   @unique
-  tmdbId    Int      @unique
-  name      String   @unique
-  logoPath  String
-  priority  Int      @default(20)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  id        Int      @id @default(autoincrement())
-  media     Media[]
-}
-
-model Network {
+model network {
   slug      String   @unique
   tmdbId    Int      @unique
   logoPath  String
   name      String
   country   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  id        Int      @id @default(autoincrement())
-  media     Media[]
+  updatedAt DateTime @default(now())
+  id        Int      @id(map: "Network_pkey") @default(autoincrement())
+  media     media[]  @relation("mediaToNetwork")
+}
+
+model player {
+  url          String   @unique
+  languageName String
+  hostName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  id           Int      @id(map: "Player_pkey") @default(autoincrement())
+  episodeId    Int
+  episode      episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  host         host     @relation(fields: [hostName], references: [name], onDelete: Cascade)
+  language     language @relation(fields: [languageName], references: [name], onDelete: Cascade)
+}
+
+model provider {
+  slug      String   @unique
+  tmdbId    Int      @unique
+  name      String   @unique
+  logoPath  String
+  priority  Int      @default(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  id        Int      @id(map: "WatchProvider_pkey") @default(autoincrement())
+  media     media[]  @relation("mediaToProvider")
 }
 
 enum MediaType {

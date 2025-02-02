@@ -1,40 +1,47 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import EpisodeCard from "@/features/episodes/components/EpisodeCard";
-import { Episode } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { Image as ImageIcon, List } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
 import { useState } from "react";
 
 type Props = {
-  episodes: Episode[];
-  currentEpisode: number;
+  episodes: Prisma.episodeGetPayload<{ include: { players: true } }>[];
 };
 
-const EpisodeSelector = ({ episodes, currentEpisode }: Props) => {
-  const [number, setNumber] = useState("");
+const EpisodeSelector = ({ episodes }: Props) => {
+  const [filter, setFilter] = useState("");
+  const [display, setDisplay] = useQueryState(
+    "display",
+    parseAsString.withDefault("card"),
+  );
 
   return (
-    <Card className="flex flex-1 flex-col">
-      <div className="border-b p-2">
+    <Card className="flex max-h-[521.6px] w-full flex-col">
+      <div className="flex gap-1 border-b p-1">
         <Input
-          onChange={(e) => setNumber(e.currentTarget.value)}
+          onChange={(e) => setFilter(e.currentTarget.value)}
           placeholder="Filtrer les episodes"
-          value={number}
-          className="border-none"
+          value={filter}
         />
+        <Button
+          onClick={() => setDisplay(display === "card" ? "list" : "card")}
+          className="shrink-0"
+          variant={"outline"}
+          size={"icon"}
+        >
+          {display === "card" ? <ImageIcon /> : <List />}
+        </Button>
       </div>
 
-      <div className="grid h-full max-h-[488px] flex-1 grid-cols-[repeat(auto-fill,minmax(256px,1fr))] gap-2 overflow-y-auto p-2">
-        {episodes.map(
-          (item) =>
-            `${item.number}`.includes(number) && (
-              <EpisodeCard
-                currentEpisode={currentEpisode}
-                episode={item}
-                key={item.id}
-              />
-            ),
-        )}
+      <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-1 overflow-y-auto p-1.5">
+        {episodes.map((item) => {
+          const show = `${item.number}`.includes(filter);
+          if (show) return <EpisodeCard episode={item} key={item.id} />;
+        })}
       </div>
     </Card>
   );

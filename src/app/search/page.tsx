@@ -1,12 +1,8 @@
 import { Input } from "@/components/ui/input";
 import MediaCard from "@/features/media/components/MediaCard";
-import { searchMedia } from "@/features/media/server/actions/media";
+import { searchMedia } from "@/actions/media";
 
-type Props = {
-  searchParams: Promise<{
-    query?: string;
-  }>;
-};
+type Props = { searchParams: Promise<{ query?: string }> };
 
 const SearchPage = async ({ searchParams }: Props) => {
   const { query } = await searchParams;
@@ -17,6 +13,8 @@ const SearchPage = async ({ searchParams }: Props) => {
       <form action="#">
         <Input
           placeholder="Rechercher des films et des séries..."
+          autoComplete={"off"}
+          type="text"
           defaultValue={query}
           minLength={1}
           name="query"

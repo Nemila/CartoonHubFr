@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { editMediaSchema, EditMediaType } from "@/features/media/schemas/media";
-import { editMedia } from "@/features/media/server/actions/media";
+import { editMedia } from "@/actions/media";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Media } from "@prisma/client";

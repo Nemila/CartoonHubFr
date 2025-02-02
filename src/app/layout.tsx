@@ -1,14 +1,16 @@
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Outfit as Font } from "next/font/google";
+import { Karla as Font } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 
 const fontSans = Font({
   subsets: ["latin"],
-  weight: "variable",
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -46,15 +48,17 @@ export default function RootLayout({
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
-      <html lang="fr" className="dark">
-        <body
-          className={`${fontSans.className} flex min-h-svh flex-col antialiased`}
-        >
-          <Navbar />
-          <div className="container flex flex-1 flex-col">{children}</div>
-          <Footer />
-          <Toaster />
-        </body>
+      <html lang="fr" className={cn("dark", fontSans.className)}>
+        <NuqsAdapter>
+          <body
+            className={`flex min-h-svh flex-col overflow-x-hidden antialiased`}
+          >
+            <Navbar />
+            <div className="container flex flex-1 flex-col">{children}</div>
+            <Footer />
+            <Toaster />
+          </body>
+        </NuqsAdapter>
       </html>
     </ClerkProvider>
   );

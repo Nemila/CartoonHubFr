@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <nav className="sticky left-0 top-0 z-10 flex w-full items-center justify-center border-b bg-card">
+    <nav className="sticky left-0 top-0 z-10 flex w-full items-center justify-center border-b bg-[#080808]">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link prefetch={false} href={"/"}>
           <Image
@@ -29,16 +29,17 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden flex-1 items-center justify-end gap-4 lg:flex">
-          <form action="/search" className="flex-1">
+          <form action="/search" className="max-w-[400px] flex-1">
             <Input
               placeholder="Rechercher des films et des séries..."
-              className="w-full min-w-[300px] border-none"
+              className="w-full min-w-[300px]"
+              autoComplete="off"
               name="query"
               required
             />
           </form>
 
-          <div className="flex shrink-0 gap-2">
+          <div className="flex shrink-0 gap-1">
             <Button variant={"ghost"} asChild>
               <Link prefetch={false} href={"/"}>
                 Accueil

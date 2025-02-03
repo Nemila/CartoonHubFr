@@ -1,31 +1,34 @@
+import { media } from "@prisma/client";
+import { Star } from "lucide-react";
 import Image from "next/image";
-import React from "react";
-import { Badge } from "./ui/badge";
-import { CalendarDays, Star } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "./ui/badge";
+import { BLUR_DATA } from "@/lib/data";
 
-const HorizontalCard = () => {
+const HorizontalCard = ({ data }: { data: media }) => {
   return (
     <Link
-      href={"/"}
-      className="bg-dark-2 group flex h-[100px] items-center rounded-lg outline-none ring-ring transition-all hover:-translate-x-1 hover:ring-1 focus-visible:-translate-x-1 focus-visible:ring-1"
+      href={`/${data.mediaType}/${data.tmdbId}/${data.season}`}
+      className="group flex h-[100px] items-center rounded-lg bg-dark-2 outline-none ring-ring transition-all hover:-translate-x-1 hover:ring-1 focus-visible:-translate-x-1 focus-visible:ring-1"
     >
       <figure className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-lg">
         <Image
           alt="poster"
           title="poster"
-          src={
-            "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx176301-AclxpmzlKoBM.jpg"
-          }
+          src={data.posterPath || ""}
           width={500}
           height={500}
+          unoptimized
+          priority
+          placeholder="blur"
+          blurDataURL={BLUR_DATA}
           className="size-full object-cover object-center"
         />
       </figure>
 
-      <div className="flex h-full flex-col p-2">
+      <div className="flex h-full flex-col justify-center p-2">
         <p className="line-clamp-2 text-sm font-normal transition-all group-hover:text-secondary group-focus:text-secondary md:text-base">
-          The Apothecary Diaries Saison 2
+          {data.title}
         </p>
 
         <div className="mt-1 flex items-center gap-1">
@@ -33,8 +36,8 @@ const HorizontalCard = () => {
             <Star className="mr-1 size-2.5 fill-white stroke-white" />8
           </Badge>
 
-          <Badge variant={"outline"} className="h-fit px-1.5">
-            TV
+          <Badge variant={"outline"} className="h-fit px-1.5 uppercase">
+            {data.mediaType}
           </Badge>
 
           <Badge variant={"outline"} className="h-fit px-1.5">
@@ -50,11 +53,9 @@ const HorizontalCard = () => {
             >
               <path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path>
             </svg>
-            2025
+            {new Date(data.releaseDate).getFullYear()}
           </Badge>
         </div>
-
-        <small className="mt-1">Released</small>
       </div>
     </Link>
   );

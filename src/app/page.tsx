@@ -9,11 +9,12 @@ import { MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 const Home = async () => {
-  const [trending, newReleases] = await getHomeMedia();
+  const [trending, newReleases, popularSeriesLastYear, popularMoviesLastYear] =
+    await getHomeMedia();
 
   return (
     <main className="flex flex-col gap-4 py-4">
-      <Featured media={trending} />
+      <Featured media={trending.slice(0, 5)} />
 
       <div className="flex flex-col gap-4 lg:flex-row">
         <HomeMediaGrid
@@ -88,24 +89,26 @@ const Home = async () => {
 
           <div className="flex w-full flex-col gap-4 md:flex-row lg:max-w-sm lg:flex-col">
             <Card className="flex w-full flex-col gap-2 border-none p-2">
-              <div className="text-xl font-bold">Top Airing</div>
+              <div className="text-xl font-bold">
+                Top Séries {new Date().getFullYear() - 1}
+              </div>
 
               <div className="flex flex-col gap-2">
-                <HorizontalCard />
-                <HorizontalCard />
-                <HorizontalCard />
-                <HorizontalCard />
+                {popularSeriesLastYear.slice(0, 5).map((item) => (
+                  <HorizontalCard key={item.id} data={item} />
+                ))}
               </div>
             </Card>
 
             <Card className="flex w-full flex-col gap-2 border-none p-2">
-              <div className="text-xl font-bold">Top Airing</div>
+              <div className="text-xl font-bold">
+                Top Films {new Date().getFullYear() - 1}
+              </div>
 
               <div className="flex flex-col gap-2">
-                <HorizontalCard />
-                <HorizontalCard />
-                <HorizontalCard />
-                <HorizontalCard />
+                {popularMoviesLastYear.slice(0, 5).map((item) => (
+                  <HorizontalCard key={item.id} data={item} />
+                ))}
               </div>
             </Card>
           </div>

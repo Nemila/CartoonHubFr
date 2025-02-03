@@ -41,18 +41,33 @@ export default class MediaService {
     return results;
   };
 
-  trending = async (payload?: { mediaType: MediaType }) => {
+  trending = async (payload?: { mediaType?: MediaType }) => {
     const results = await prisma.media.findMany({
+      orderBy: [{ releaseDate: "desc" }, { popularity: "desc" }],
       where: { mediaType: payload?.mediaType },
-      orderBy: { popularity: "desc" },
-      take: this.defaultLimit,
       distinct: ["originalTitle"],
+      take: this.defaultLimit,
     });
-
     return results;
   };
 
-  newReleases = async (payload?: { mediaType: MediaType }) => {
+  trendingByYear = async (payload?: {
+    mediaType?: MediaType;
+    year: number;
+  }) => {
+    const results = await prisma.media.findMany({
+      where: {
+        mediaType: payload?.mediaType,
+        releaseDate: { contains: String(payload?.year) },
+      },
+      orderBy: { popularity: "desc" },
+      distinct: ["originalTitle"],
+      take: this.defaultLimit,
+    });
+    return results;
+  };
+
+  newReleases = async (payload?: { mediaType?: MediaType }) => {
     const results = await prisma.media.findMany({
       where: { mediaType: payload?.mediaType },
       orderBy: { createdAt: "desc" },

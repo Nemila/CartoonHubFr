@@ -15,7 +15,7 @@ type Props = {
 const HomeMediaGrid = ({ data }: Props) => {
   const [orderBy, setOrderBy] = useQueryState(
     "orderBy",
-    parseAsString.withDefault("createdAt"),
+    parseAsString.withDefault("popularity"),
   );
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 

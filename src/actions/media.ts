@@ -10,12 +10,18 @@ import { revalidateTag } from "next/cache";
 const mediaService = new MediaService();
 
 export const getHomeMedia = async () => {
-  const [trending, newReleases] = await Promise.all([
+  const data = await Promise.all([
     mediaService.trending(),
     mediaService.newReleases(),
+    mediaService.trending({
+      mediaType: "series",
+    }),
+    mediaService.trending({
+      mediaType: "movies",
+    }),
   ]);
 
-  return [trending, newReleases];
+  return data;
 };
 
 export const searchMedia = async (query?: string) => {

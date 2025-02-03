@@ -10,7 +10,7 @@ import _ from "lodash";
 import { Flatrate, Genre, WatchProviders } from "tmdb-ts";
 
 export default class MediaService {
-  defaultLimit = 18;
+  defaultLimit = 180;
 
   create = async (payload: CreateMediaType) => {
     const createInput =
@@ -55,9 +55,9 @@ export default class MediaService {
   newReleases = async (payload?: { mediaType: MediaType }) => {
     const results = await prisma.media.findMany({
       where: { mediaType: payload?.mediaType },
-      orderBy: { popularity: "desc" },
+      orderBy: { createdAt: "desc" },
       take: this.defaultLimit,
-      distinct: ["createdAt"],
+      distinct: ["originalTitle"],
     });
 
     return results;

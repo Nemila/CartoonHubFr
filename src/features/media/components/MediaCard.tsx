@@ -3,6 +3,7 @@ import { media } from "@prisma/client";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { BLUR_DATA } from "@/lib/data";
 
 type Props = { data: media };
 
@@ -11,7 +12,7 @@ const MediaCard = ({ data }: Props) => {
     <Link
       prefetch={false}
       className="group flex flex-col gap-2 rounded-md outline-none ring-ring focus-visible:ring-1"
-      href={`/${data.mediaType}/${data.tmdbId}/${data.season}?ep=1`}
+      href={`/${data.mediaType}/${data.tmdbId}/${data.season}`}
     >
       <figure className="aspect-[3/4.5] w-full overflow-hidden rounded-md transition-all group-hover:-translate-y-2 group-focus:-translate-y-2">
         <Image
@@ -19,10 +20,12 @@ const MediaCard = ({ data }: Props) => {
           src={data.posterPath || "/poster.png"}
           title={data.title}
           alt={data.title}
-          loading="eager"
           height={500}
           width={500}
           unoptimized
+          priority
+          placeholder="blur"
+          blurDataURL={BLUR_DATA}
         />
       </figure>
 

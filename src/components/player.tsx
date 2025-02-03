@@ -14,7 +14,7 @@ import SeasonCard from "@/features/media/components/SeasonCard";
 import { media, Prisma } from "@prisma/client";
 import { ArrowLeftRight, FastForward, Rewind } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 type Props = {
   media: media;
@@ -25,11 +25,10 @@ type Props = {
 };
 
 const Player = ({ media, seasonCount, episodes }: Props) => {
-  const [number, setNumber] = useQueryState("ep", {
-    parse: (value: string) => Number(value),
-    clearOnDefault: false,
-    defaultValue: 1,
-  });
+  const [number, setNumber] = useQueryState(
+    "ep",
+    parseAsInteger.withDefault(1),
+  );
   const [playerId, setPlayerId] = useQueryState("player", parseAsInteger);
 
   const episode = useMemo(() => {
@@ -48,7 +47,7 @@ const Player = ({ media, seasonCount, episodes }: Props) => {
     if (!player) return null;
     setPlayerId(player.id);
     return player;
-  }, [playerId, episode]);
+  }, [playerId, episode, setPlayerId]);
 
   return (
     <div className="flex flex-col gap-2 lg:flex-row">

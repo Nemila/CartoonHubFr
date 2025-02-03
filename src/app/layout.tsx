@@ -1,5 +1,6 @@
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
+import ReactQueryProvider from "@/components/ReactQueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -49,16 +50,18 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="fr" className={cn("dark", fontSans.className)}>
-        <NuqsAdapter>
-          <body
-            className={`flex min-h-svh flex-col overflow-x-hidden antialiased`}
-          >
-            <Navbar />
-            <div className="container flex flex-1 flex-col">{children}</div>
-            <Footer />
-            <Toaster />
-          </body>
-        </NuqsAdapter>
+        <ReactQueryProvider>
+          <NuqsAdapter>
+            <body
+              className={`flex min-h-svh flex-col overflow-x-hidden antialiased`}
+            >
+              <Navbar />
+              <div className="container flex flex-1 flex-col">{children}</div>
+              <Footer />
+              <Toaster />
+            </body>
+          </NuqsAdapter>
+        </ReactQueryProvider>
       </html>
     </ClerkProvider>
   );

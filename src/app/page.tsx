@@ -1,98 +1,114 @@
 import { getHomeMedia } from "@/actions/media";
-import HomeFilter from "@/components/HomeFilter";
+import Featured from "@/components/Featured";
+import HomeMediaGrid from "@/components/HomeMediaGrid";
 import HorizontalCard from "@/components/HorizontalCard";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import MediaCard from "@/features/media/components/MediaCard";
-import Image from "next/image";
+import { Progress } from "@/components/ui/progress";
+import { MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 const Home = async () => {
   const [trending, newReleases] = await getHomeMedia();
 
   return (
     <main className="flex flex-col gap-4 py-4">
-      <div className="relative min-h-[60svh] overflow-hidden rounded-lg">
-        <Image
-          className="object-cover object-center"
-          src={trending[1].backdropPath || ""}
-          alt="banner"
-          fill
-        />
-
-        <div className="absolute left-0 top-0 flex size-full items-end bg-gradient-to-t from-black to-transparent p-2 md:p-6">
-          <div className="flex w-full flex-col justify-between gap-2 md:flex-row md:items-end">
-            <div className="flex max-w-lg flex-col gap-2 text-balance">
-              <p className="line-clamp-2 text-2xl font-bold md:text-4xl">
-                {trending[1].title} / {trending[1].originalTitle}
-              </p>
-
-              <div className="flex gap-2">
-                <Badge variant={"outline"}>
-                  {trending[1].rating.toFixed(0)} / 10
-                </Badge>
-                <Badge variant={"outline"}>{trending[1].mediaType}</Badge>
-                <Badge variant={"outline"}>{trending[1].status}</Badge>
-              </div>
-
-              <div className="hidden md:flex">
-                <p className="line-clamp-2">{trending[1].overview}</p>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button>Regarder</Button>
-              <Button variant={"ghost"}>Plus Tard</Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* <div className="flex gap-2">
-        <div className="bg-dark-0 size-24"></div>
-        <div className="bg-dark-1 size-24"></div>
-        <div className="bg-dark-2 size-24"></div>
-        <div className="bg-dark-3 size-24"></div>
-      </div> */}
-
-      {/* <DonationCard /> */}
+      <Featured media={trending} />
 
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div className="flex flex-1 flex-col gap-4">
-          <section className="flex flex-col gap-4">
-            <HomeFilter />
+        <HomeMediaGrid
+          data={{
+            popularity: trending,
+            createdAt: newReleases,
+          }}
+        />
 
-            {/* <h2 className="text-3xl font-bold">Populaires</h2> */}
-            <div className="cartoon-grid">
-              {trending.map((item) => (
-                <MediaCard key={item.id} data={item} />
-              ))}
-            </div>
-          </section>
-        </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:flex-row lg:max-w-sm lg:flex-col">
+            <Card className="flex flex-1 flex-col gap-4 p-4">
+              <div>
+                <MessageCircle className="mb-2 size-7 fill-foreground" />
+                <p className="text-xl font-bold">Rejoignez notre Discord</p>
+                <p className="text-sm">
+                  Rejoignez notre Discord pour rester informé et participer à la
+                  communauté CartoonHub.
+                </p>
+              </div>
 
-        <div className="flex w-full flex-col gap-4 md:flex-row lg:max-w-sm lg:flex-col">
-          <Card className="flex w-full flex-col gap-2 border-none p-2">
-            <div className="text-xl font-bold">Top Airing</div>
+              <div className="mt-auto flex gap-4">
+                <Button size={"lg"} className="flex-1 font-semibold" asChild>
+                  <Link
+                    target="_blank"
+                    href="https://discord.com/invite/2Cj7ATwvQT"
+                  >
+                    Rejoindre la communauté
+                  </Link>
+                </Button>
+              </div>
+            </Card>
 
-            <div className="flex flex-col gap-2">
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
-            </div>
-          </Card>
+            <Card className="flex flex-1 flex-col gap-4 p-4">
+              <div>
+                <p className="text-xl font-bold">Donations</p>
+                <p className="text-sm">
+                  Le site coûte cher à maintenir. Faites un don pour qu&apos;il
+                  ne disparaisse pas. Si chacun donne 1€, nous serons sauvés.
+                </p>
+              </div>
 
-          <Card className="flex w-full flex-col gap-2 border-none p-2">
-            <div className="text-xl font-bold">Top Airing</div>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col text-xs">
+                    <span className="text-lg font-bold">$200</span>
+                    <span>Objectif : $10</span>
+                  </div>
 
-            <div className="flex flex-col gap-2">
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
-            </div>
-          </Card>
+                  <div className="flex flex-col text-right text-xs">
+                    <span className="text-lg font-bold">10%</span>
+                    <span>de l&apos;objectif atteint</span>
+                  </div>
+                </div>
+
+                <Progress className="w-full" value={10} />
+              </div>
+
+              <div className="mt-auto flex">
+                <Button size={"lg"} className="flex-1 font-semibold" asChild>
+                  <Link
+                    target="_blank"
+                    href="https://www.paypal.com/paypalme/cartoonhub
+"
+                  >
+                    Faire un don
+                  </Link>
+                </Button>
+              </div>
+            </Card>
+          </div>
+
+          <div className="flex w-full flex-col gap-4 md:flex-row lg:max-w-sm lg:flex-col">
+            <Card className="flex w-full flex-col gap-2 border-none p-2">
+              <div className="text-xl font-bold">Top Airing</div>
+
+              <div className="flex flex-col gap-2">
+                <HorizontalCard />
+                <HorizontalCard />
+                <HorizontalCard />
+                <HorizontalCard />
+              </div>
+            </Card>
+
+            <Card className="flex w-full flex-col gap-2 border-none p-2">
+              <div className="text-xl font-bold">Top Airing</div>
+
+              <div className="flex flex-col gap-2">
+                <HorizontalCard />
+                <HorizontalCard />
+                <HorizontalCard />
+                <HorizontalCard />
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </main>

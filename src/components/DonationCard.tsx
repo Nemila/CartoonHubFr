@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -46,25 +45,6 @@ const DonationCard = () => {
 "
             >
               Faire un don
-            </Link>
-          </Button>
-        </div>
-      </Card>
-
-      <Card className="flex flex-1 flex-col gap-4 p-4">
-        <div>
-          <MessageCircle className="mb-2 size-7 fill-foreground" />
-          <p className="text-xl font-bold">Rejoignez notre Discord</p>
-          <p className="text-sm">
-            Rejoignez notre Discord pour rester informé et participer à la
-            communauté CartoonHub.
-          </p>
-        </div>
-
-        <div className="mt-auto flex gap-4">
-          <Button size={"lg"} className="flex-1 font-semibold" asChild>
-            <Link target="_blank" href="https://discord.com/invite/2Cj7ATwvQT">
-              Rejoindre la communauté
             </Link>
           </Button>
         </div>

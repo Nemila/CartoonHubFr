@@ -7,8 +7,11 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 
 type Props = { episode: episode };
 const EpisodeCard = ({ episode }: Props) => {
-  const [number, setNumber] = useQueryState("ep", parseAsInteger);
-  const [display] = useQueryState("display", parseAsString);
+  const [number, setNumber] = useQueryState(
+    "ep",
+    parseAsInteger.withDefault(1),
+  );
+  const [display] = useQueryState("display", parseAsString.withDefault("card"));
 
   if (display === "list") {
     return (

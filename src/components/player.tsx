@@ -60,15 +60,22 @@ const Player = ({ media, seasonCount }: Props) => {
   }, [episode, playerId, setPlayerId]);
 
   useEffect(() => {
+    const controller = new AbortController();
     if (episode && user) {
-      setTimeout(async () => {
-        await createHistory({
-          episode: episode.number,
-          mediaId: media.id,
-          userId: user.id,
-        });
-      }, 3000);
+      setTimeout(
+        async () => {
+          await createHistory({
+            episode: episode.number,
+            mediaId: media.id,
+            userId: user.id,
+          });
+        },
+        3000,
+        { signal: controller.signal },
+      );
     }
+
+    return () => controller.abort();
   }, [episode, media.id, user]);
 
   return (

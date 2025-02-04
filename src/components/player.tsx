@@ -52,7 +52,7 @@ const Player = ({ media, seasonCount }: Props) => {
     const episode = findEpisode || media.episodes[0];
     if (!episode) return;
     setEpisode(episode);
-  }, []);
+  }, [media.episodes, number]);
 
   useEffect(() => {
     if (!episode) return;

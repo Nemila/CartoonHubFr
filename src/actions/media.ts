@@ -30,6 +30,7 @@ export const getHomeMedia = async (userId?: string) => {
         where: { clerkUserId: userId },
         orderBy: { updatedAt: "desc" },
         include: { media: true },
+        take: 15,
       })
     : [];
 

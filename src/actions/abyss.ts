@@ -9,7 +9,7 @@ const abyssFileSchema = z.object({
 });
 
 const abyssFileResponseSchema = z.object({
-  items: abyssFileSchema,
+  items: abyssFileSchema.array(),
   pagination: z.object({
     current: z.coerce.number(),
     next: z.coerce.number(),

@@ -53,12 +53,6 @@ const CommunityCard = () => {
             <SiTiktok />
           </Link>
         </Button>
-
-        {/* <Button size={"lg"} className="flex-1" asChild>
-          <Link target="_blank" href="https://discord.com/invite/2Cj7ATwvQT">
-            Rejoindre la communauté
-          </Link>
-        </Button> */}
       </div>
     </Card>
   );

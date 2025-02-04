@@ -6,7 +6,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getMediaCount } from "@/actions/media";
-import { clearFullCache } from "@/lib/cache";
 import { Cat, Clapperboard } from "lucide-react";
 
 const AdminPage = async () => {
@@ -20,7 +19,6 @@ const AdminPage = async () => {
       <form
         action={async () => {
           "use server";
-          clearFullCache();
         }}
       >
         <Button>Clear Cache</Button>

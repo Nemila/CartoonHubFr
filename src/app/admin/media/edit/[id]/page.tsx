@@ -5,19 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import EditMediaForm from "@/components/media/forms/EditMediaForm";
-import { findMediaByIdCached } from "@/actions/media";
-import { notFound } from "next/navigation";
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
-
-const EditMediaPage = async ({ params }: Props) => {
-  const { id } = await params;
-  const media = await findMediaByIdCached(id);
-  if (!media) notFound();
-
+const EditMediaPage = async () => {
   return (
     <div className="flex flex-col gap-4">
       <Card>
@@ -26,9 +15,7 @@ const EditMediaPage = async ({ params }: Props) => {
           <CardDescription>Edit media metadata</CardDescription>
         </CardHeader>
 
-        <CardContent>
-          <EditMediaForm media={media} />
-        </CardContent>
+        <CardContent></CardContent>
       </Card>
     </div>
   );

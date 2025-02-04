@@ -57,12 +57,12 @@ export class EpisodeService {
             create: {
               url: payload.url,
               languageName: payload.language || "vf",
-              videoHostName: payload.videHost || "hydrax",
+              hostName: payload.videHost || "hydrax",
             },
           },
         },
       }),
-    } satisfies Prisma.EpisodeCreateInput;
+    } satisfies Prisma.episodeCreateInput;
     return episodeCreateInput;
   };
 
@@ -104,16 +104,16 @@ export class EpisodeService {
             create: {
               url: payload.url,
               languageName: payload.language || "vf",
-              videoHostName: payload.videHost || "hydrax",
+              hostName: payload.videHost || "hydrax",
             },
           },
         },
       }),
-    } satisfies Prisma.EpisodeCreateInput;
+    } satisfies Prisma.episodeCreateInput;
     return episodeCreateInput;
   };
 
-  upsert = async (mediaId: number, payload: Prisma.EpisodeCreateInput) => {
+  upsert = async (mediaId: number, payload: Prisma.episodeCreateInput) => {
     return await prisma.episode.upsert({
       where: {
         mediaId_season_number: {

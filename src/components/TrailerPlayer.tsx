@@ -14,8 +14,8 @@ const TrailerPlayer = ({ videos }: Props) => {
         <ReactPlayer
           url={videos[videoId]}
           title="Trailer Player"
-          width={"100%"}
           height={"100%"}
+          width={"100%"}
           controls
           playing
           muted

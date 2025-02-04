@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { BLUR_DATA } from "@/lib/data";
 import { media } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,7 +41,10 @@ const FeaturedItem = async ({ data }: { data: media }) => {
       <Image
         className="object-cover object-center"
         src={data.backdropPath || ""}
+        blurDataURL={BLUR_DATA}
+        placeholder="blur"
         alt="banner"
+        unoptimized
         fill
       />
 

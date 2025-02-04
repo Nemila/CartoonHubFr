@@ -10,7 +10,7 @@ import { catalogueSearchParams } from "@/lib/searchParams";
 import { genre, network } from "@prisma/client";
 import { useQueryStates } from "nuqs";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 type Props = { genres: genre[]; networks: network[] };
 

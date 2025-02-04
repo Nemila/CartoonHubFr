@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
+import { dbCache } from "@/lib/utils";
 import {
   editMediaSchema,
   EditMediaType,
@@ -10,7 +11,7 @@ import { revalidateTag } from "next/cache";
 
 const mediaService = new MediaService();
 
-export const getHomeMedia = async (userId?: string) => {
+export const getHomeMediaInner = async (userId?: string) => {
   const [trending, newRelease, popularSeriesLastYear, popularMoviesLastYear] =
     await Promise.all([
       mediaService.trending(),
@@ -43,12 +44,17 @@ export const getHomeMedia = async (userId?: string) => {
   };
 };
 
+export const getHomeMedia = async (userId?: string) => {
+  const cacheFn = dbCache(getHomeMediaInner);
+  return await cacheFn(userId);
+};
+
 export const searchMedia = async (query?: string) => {
   if (!query) return [];
   return mediaService.search(query);
 };
 
-export const getMediaDetails = async (payload: any) => {
+export const getMediaDetailsInner = async (payload: any) => {
   try {
     const valid = getMediaDetailsSchema.parse(payload);
     const media = await mediaService.details(valid);
@@ -60,18 +66,20 @@ export const getMediaDetails = async (payload: any) => {
   }
 };
 
+export const getMediaDetails = async (payload: any) => {
+  const cacheFn = dbCache(getMediaDetailsInner);
+  return await cacheFn(payload);
+};
+
 export const getMediaCount = async (mediaType: "series" | "movies") => {
   return await mediaService.count(mediaType);
 };
 
 export const editMedia = async (payload: EditMediaType) => {
   const valid = editMediaSchema.parse(payload);
-
   const media = await mediaService.update(valid);
-
   revalidateTag(`/`);
   revalidateTag(`/search`);
   revalidateTag(`/[mediaType]/${payload.tmdbId}`);
-
   return media;
 };

@@ -8,8 +8,6 @@ import type { Metadata } from "next";
 import { Karla as Font } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
-import "@vidstack/react/player/styles/base.css";
-import "@vidstack/react/player/styles/plyr/theme.css";
 
 const fontSans = Font({
   subsets: ["latin"],

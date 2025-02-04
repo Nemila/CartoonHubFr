@@ -1,11 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
-import {
-  PlyrLayout,
-  plyrLayoutIcons,
-} from "@vidstack/react/player/layouts/plyr";
 import { useState } from "react";
+import ReactPlayer from "react-player";
 
 type Props = { videos: string[] };
 
@@ -15,14 +11,15 @@ const TrailerPlayer = ({ videos }: Props) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="aspect-video overflow-hidden rounded-lg border">
-        <MediaPlayer
-          src={`youtube/${videos[videoId].match(/v?=(.*)/)?.[1]}`}
+        <ReactPlayer
+          url={videos[videoId]}
           title="Trailer Player"
-          className="size-full"
-        >
-          <MediaProvider />
-          <PlyrLayout icons={plyrLayoutIcons} />
-        </MediaPlayer>
+          width={"100%"}
+          height={"100%"}
+          controls
+          playing
+          muted
+        />
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-2">

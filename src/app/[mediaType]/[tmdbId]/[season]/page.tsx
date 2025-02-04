@@ -62,7 +62,7 @@ const WatchPage = async ({ params }: Props) => {
         <Player media={media} seasonCount={seasonCount} />
 
         <div className="flex flex-col gap-2 rounded-lg bg-dark-1 p-2 md:flex-row">
-          <div className="flex w-full shrink-0 flex-col gap-2 md:max-w-[200px]">
+          <aside className="flex w-full shrink-0 flex-col gap-2 md:max-w-[200px]">
             <figure className="aspect-[3/4.5] overflow-hidden rounded-lg">
               <Image
                 className="size-full object-cover object-center"
@@ -85,19 +85,11 @@ const WatchPage = async ({ params }: Props) => {
                   Noter
                 </Link>
               </Button>
-
-              {/* {isStaff && (
-                <Button variant={"outline"} asChild>
-                  <Link prefetch={false} href={`/admin/media/edit/${media.id}`}>
-                    Modifier
-                  </Link>
-                </Button>
-              )} */}
             </div>
-          </div>
+          </aside>
 
           <div className="flex flex-1 flex-col gap-2">
-            <div className="flex flex-col">
+            <div>
               <p className="text-lg font-bold">{media.title}</p>
               <small>
                 {media.originalTitle}, {media.alternativeTitles}
@@ -113,7 +105,10 @@ const WatchPage = async ({ params }: Props) => {
                 <p>Streaming</p>
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(3.4rem,1fr))] gap-2">
                   {media.providers.map((item) => (
-                    <div key={item.id} className="overflow-hidden rounded-md">
+                    <figure
+                      key={item.id}
+                      className="overflow-hidden rounded-md"
+                    >
                       <Image
                         className="size-full object-contain"
                         src={item.logoPath}
@@ -123,7 +118,7 @@ const WatchPage = async ({ params }: Props) => {
                         width={500}
                         unoptimized
                       />
-                    </div>
+                    </figure>
                   ))}
                 </div>
               </div>
@@ -134,7 +129,7 @@ const WatchPage = async ({ params }: Props) => {
                 <p>Television</p>
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-2">
                   {media.networks.map((item) => (
-                    <div
+                    <figure
                       key={item.id}
                       className="flex h-14 items-center justify-center overflow-hidden rounded-md bg-white px-4 py-2"
                     >
@@ -147,7 +142,7 @@ const WatchPage = async ({ params }: Props) => {
                         width={500}
                         unoptimized
                       />
-                    </div>
+                    </figure>
                   ))}
                 </div>
               </div>
@@ -174,8 +169,9 @@ const WatchPage = async ({ params }: Props) => {
                         className="size-full object-cover object-center"
                         height={500}
                         width={500}
+                        unoptimized
                         src={item}
-                        alt=""
+                        alt="backdrop image"
                       />
                     </figure>
                   ))}
@@ -193,8 +189,9 @@ const WatchPage = async ({ params }: Props) => {
                         className="size-full object-cover object-center"
                         height={500}
                         width={500}
+                        unoptimized
                         src={item}
-                        alt=""
+                        alt="poster image"
                       />
                     </figure>
                   ))}

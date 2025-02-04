@@ -47,6 +47,12 @@ const Navbar = () => {
             </Button>
 
             <Button variant={"ghost"} asChild>
+              <Link prefetch={false} href={"/search"}>
+                Search
+              </Link>
+            </Button>
+
+            <Button variant={"ghost"} asChild>
               <Link prefetch={false} href={"https://discord.gg/M7gRTuXc6d"}>
                 Communauté
               </Link>

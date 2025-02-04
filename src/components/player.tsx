@@ -12,10 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUser } from "@clerk/nextjs";
-import { Prisma } from "@prisma/client";
+import { player, Prisma } from "@prisma/client";
 import { ArrowLeftRight, Clock, FastForward, Rewind, Star } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   seasonCount: number;
@@ -41,22 +41,27 @@ const Player = ({ media, seasonCount }: Props) => {
     parseAsInteger.withDefault(media.episodes[0].players[0].id),
   );
 
-  const episode = useMemo(() => {
-    if (media.episodes.length < 1) return null;
+  const [episode, setEpisode] = useState<Prisma.episodeGetPayload<{
+    include: { players: true };
+  }> | null>(null);
+  const [player, setPlayer] = useState<player | null>(null);
+
+  useEffect(() => {
+    if (media.episodes.length < 1) return;
     const findEpisode = media.episodes.find((ep) => ep.number === number);
     const episode = findEpisode || media.episodes[0];
-    if (!episode) return null;
-    return episode;
-  }, [media.episodes, number]);
+    if (!episode) return;
+    setEpisode(episode);
+  }, []);
 
-  const player = useMemo(() => {
-    if (!episode) return null;
+  useEffect(() => {
+    if (!episode) return;
     const players = episode.players;
     const findPlayer = players.find((pl) => pl.id === playerId);
     const player = findPlayer || players[0];
-    if (!player) return null;
+    if (!player) return;
     setPlayerId(player.id);
-    return player;
+    setPlayer(player);
   }, [episode, playerId, setPlayerId]);
 
   useEffect(() => {

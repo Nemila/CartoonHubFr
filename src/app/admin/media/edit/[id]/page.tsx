@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import EditMediaForm from "@/features/media/components/forms/EditMediaForm";
+import EditMediaForm from "@/components/media/forms/EditMediaForm";
 import { findMediaByIdCached } from "@/actions/media";
 import { notFound } from "next/navigation";
 

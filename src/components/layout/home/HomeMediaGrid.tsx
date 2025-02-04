@@ -1,5 +1,5 @@
 "use client";
-import MediaCard from "@/features/media/components/MediaCard";
+import MediaCard from "@/components/media/MediaCard";
 import { cn } from "@/lib/utils";
 import { media } from "@prisma/client";
 import { ChevronLeft, ChevronRight } from "lucide-react";

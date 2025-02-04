@@ -1,4 +1,7 @@
 "use client";
+import { createHistory } from "@/actions/history";
+import EpisodeSelector from "@/components/episode/EpisodeSelector";
+import SeasonCard from "@/components/media/SeasonCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,12 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
-import SeasonCard from "@/features/media/components/SeasonCard";
+import { useUser } from "@clerk/nextjs";
 import { Prisma } from "@prisma/client";
 import { ArrowLeftRight, Clock, FastForward, Rewind, Star } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 type Props = {
   seasonCount: number;
@@ -29,6 +31,7 @@ type Props = {
 };
 
 const Player = ({ media, seasonCount }: Props) => {
+  const { user } = useUser();
   const [number, setNumber] = useQueryState(
     "ep",
     parseAsInteger.withDefault(media.episodes[0].number),
@@ -55,6 +58,18 @@ const Player = ({ media, seasonCount }: Props) => {
     setPlayerId(player.id);
     return player;
   }, [episode, playerId, setPlayerId]);
+
+  useEffect(() => {
+    if (episode && user) {
+      setTimeout(async () => {
+        await createHistory({
+          episode: episode.number,
+          mediaId: media.id,
+          userId: user.id,
+        });
+      }, 3000);
+    }
+  }, [episode, media.id, user]);
 
   return (
     <>

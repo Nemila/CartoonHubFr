@@ -47,12 +47,6 @@ const Navbar = () => {
             </Button>
 
             <Button variant={"ghost"} asChild>
-              <Link prefetch={false} href={"/catalogue"}>
-                Catalogue
-              </Link>
-            </Button>
-
-            <Button variant={"ghost"} asChild>
               <Link prefetch={false} href={"https://discord.gg/M7gRTuXc6d"}>
                 Communauté
               </Link>

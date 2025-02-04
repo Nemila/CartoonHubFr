@@ -13,7 +13,7 @@ import {
   SignInButton,
   SignOutButton,
 } from "@clerk/nextjs";
-import { Clapperboard, Home, Menu, MessageCircle } from "lucide-react";
+import { Home, Menu, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -55,19 +55,6 @@ const MobileNavbar = () => {
             size={"lg"}
             asChild
           >
-            <Link prefetch={false} href={"/catalogue"}>
-              <Clapperboard />
-              Catalogue
-            </Link>
-          </Button>
-
-          <Button
-            className="justify-start px-4"
-            onClick={closeSheet}
-            variant={"outline"}
-            size={"lg"}
-            asChild
-          >
             <Link target="_blank" href={"https://discord.gg/M7gRTuXc6d"}>
               <MessageCircle />
               Communauté
@@ -89,7 +76,6 @@ const MobileNavbar = () => {
             <Button
               className="justify-start px-4"
               onClick={closeSheet}
-              variant={"destructive"}
               size={"lg"}
               asChild
             >

@@ -8,10 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { createEpisode } from "@/features/episodes/server/actions/episode";
-import { checkPlayerExists } from "@/features/players/server/actions/player";
+import { createEpisode } from "@/actions/episode";
+import { checkPlayerExists } from "@/actions/player";
 import { extractMediaData } from "@/lib/utils";
-import { getFiles } from "@/server/abyss";
+import { getFiles } from "@/actions/abyss";
 import MediaService from "@/services/media";
 import { revalidateTag } from "next/cache";
 import Link from "next/link";

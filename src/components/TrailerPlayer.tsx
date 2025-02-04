@@ -19,8 +19,6 @@ const TrailerPlayer = ({ videos }: Props) => {
           src={`youtube/${videos[videoId].match(/v?=(.*)/)?.[1]}`}
           title="Trailer Player"
           className="size-full"
-          autoPlay
-          muted
         >
           <MediaProvider />
           <PlyrLayout icons={plyrLayoutIcons} />

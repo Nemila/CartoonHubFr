@@ -3,8 +3,8 @@ import Player from "@/components/Player";
 import TrailerPlayer from "@/components/TrailerPlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
-import SeasonCard from "@/features/media/components/SeasonCard";
+import EpisodeSelector from "@/components/episode/EpisodeSelector";
+import SeasonCard from "@/components/media/SeasonCard";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,8 +23,11 @@ const watchPageParamsSchema = z.object({
 type Props = { params: Promise<z.infer<typeof watchPageParamsSchema>> };
 
 export async function generateStaticParams() {
-  const [trending, newReleases] = await getHomeMedia();
-  return [...trending, ...newReleases].map((item) => ({
+  const data = await getHomeMedia();
+  if (!data) throw new Error("Cannot get media");
+  const { trending } = data;
+
+  return trending.map((item) => ({
     tmdbId: String(item.tmdbId),
     mediaType: item.mediaType,
     season: String(item.season),

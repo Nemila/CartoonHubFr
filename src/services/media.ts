@@ -2,7 +2,7 @@ import {
   CreateMediaType,
   EditMediaType,
   GetMediaDetailsType,
-} from "@/features/media/schemas/media";
+} from "@/schema/media";
 import prisma from "@/lib/prisma";
 import tmdb, { TMDB_IMAGE_BASE_URL } from "@/lib/tmdb";
 import { media, MediaType, Prisma } from "@prisma/client";

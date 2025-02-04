@@ -19,7 +19,7 @@ model episode {
   description String?
   stillPath   String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   id          Int      @id(map: "Episode_pkey") @default(autoincrement())
   mediaId     Int
   media       media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
@@ -33,7 +33,7 @@ model genre {
   name      String   @unique
   slug      String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   id        Int      @id(map: "Genre_pkey") @default(autoincrement())
   media     media[]  @relation("genreToMedia")
 }
@@ -43,7 +43,7 @@ model host {
   slug      String   @unique
   priority  Int      @default(10)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   id        Int      @id(map: "VideoHost_pkey") @default(autoincrement())
   players   player[]
 }
@@ -51,7 +51,7 @@ model host {
 model language {
   name      String   @unique(map: "Language_name_key")
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   id        Int      @id(map: "Language_pkey") @default(autoincrement())
   players   player[]
 }
@@ -77,12 +77,13 @@ model media {
   tagline           String?
   mediaType         MediaType
   createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now()) @updatedAt
   id                Int        @id(map: "Media_pkey") @default(autoincrement())
   episodes          episode[]
   genres            genre[]    @relation("genreToMedia")
   networks          network[]  @relation("mediaToNetwork")
   providers         provider[] @relation("mediaToProvider")
+  histories         history[]
 
   @@unique([mediaType, tmdbId, season])
 }
@@ -94,7 +95,7 @@ model network {
   name      String
   country   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   id        Int      @id(map: "Network_pkey") @default(autoincrement())
   media     media[]  @relation("mediaToNetwork")
 }
@@ -104,7 +105,7 @@ model player {
   languageName String
   hostName     String
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
   id           Int      @id(map: "Player_pkey") @default(autoincrement())
   episodeId    Int
   episode      episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
@@ -119,7 +120,7 @@ model provider {
   logoPath  String
   priority  Int      @default(20)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   id        Int      @id(map: "WatchProvider_pkey") @default(autoincrement())
   media     media[]  @relation("mediaToProvider")
 }
@@ -127,4 +128,16 @@ model provider {
 enum MediaType {
   series
   movies
+}
+
+model history {
+  id          Int      @id @default(autoincrement())
+  media       media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episode     Int
+  clerkUserId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  mediaId     Int
+
+  @@unique([clerkUserId, mediaId])
 }

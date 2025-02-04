@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
-import SeasonCard from "@/features/media/components/SeasonCard";
+import SeasonCard from "@/components/media/SeasonCard";
 import { Prisma } from "@prisma/client";
 import { ArrowLeftRight, FastForward, Rewind } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";

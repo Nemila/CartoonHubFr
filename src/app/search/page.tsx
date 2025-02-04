@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import MediaCard from "@/features/media/components/MediaCard";
+import MediaCard from "@/components/media/MediaCard";
 import { searchMedia } from "@/actions/media";
 
 type Props = { searchParams: Promise<{ query?: string }> };

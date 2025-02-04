@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const getMediaDetailsSchema = z.object({
   mediaType: z.enum(["series", "movies"]),
-  tmdbId: z.coerce.number().min(1),
+  tmdbId: z.coerce.number(),
   season: z.coerce.number(),
 });
 export type GetMediaDetailsType = z.infer<typeof getMediaDetailsSchema>;

@@ -5,13 +5,14 @@ import {
   editMediaSchema,
   EditMediaType,
   getMediaDetailsSchema,
+  GetMediaDetailsType,
 } from "@/schema/media";
 import MediaService from "@/services/media";
 import { revalidateTag } from "next/cache";
 
 const mediaService = new MediaService();
 
-export const getHomeMediaInner = async (userId?: string) => {
+export const getHomeMediaInner = async () => {
   const [trending, newRelease, popularSeriesLastYear, popularMoviesLastYear] =
     await Promise.all([
       mediaService.trending(),
@@ -26,6 +27,15 @@ export const getHomeMediaInner = async (userId?: string) => {
       }),
     ]);
 
+  return {
+    trending,
+    newRelease,
+    popularSeriesLastYear,
+    popularMoviesLastYear,
+  };
+};
+
+export const getHomeMedia = async (userId?: string) => {
   const histories = userId
     ? await prisma.history.findMany({
         where: { clerkUserId: userId },
@@ -35,18 +45,10 @@ export const getHomeMediaInner = async (userId?: string) => {
       })
     : [];
 
-  return {
-    trending,
-    newRelease,
-    popularSeriesLastYear,
-    popularMoviesLastYear,
-    histories,
-  };
-};
+  const cacheFn = dbCache(getHomeMediaInner, { tags: ["medias", "home"] });
+  const data = await cacheFn();
 
-export const getHomeMedia = async (userId?: string) => {
-  const cacheFn = dbCache(getHomeMediaInner);
-  return await cacheFn(userId);
+  return { ...data, histories };
 };
 
 export const searchMedia = async (query?: string) => {
@@ -66,8 +68,8 @@ export const getMediaDetailsInner = async (payload: any) => {
   }
 };
 
-export const getMediaDetails = async (payload: any) => {
-  const cacheFn = dbCache(getMediaDetailsInner);
+export const getMediaDetails = async (payload: GetMediaDetailsType) => {
+  const cacheFn = dbCache(getMediaDetailsInner, { tags: ["media", "home"] });
   return await cacheFn(payload);
 };
 

@@ -8,6 +8,7 @@ const Footer = () => {
           <Link target="_blank" href="https://discord.gg/M7gRTuXc6d">
             Discord
           </Link>
+
           <Link target="_blank" href="https://www.instagram.com/cartoonhub_fr/">
             Instagram
           </Link>

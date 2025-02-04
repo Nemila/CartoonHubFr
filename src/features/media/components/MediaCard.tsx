@@ -18,14 +18,14 @@ const MediaCard = ({ data }: Props) => {
         <Image
           className="size-full object-cover object-center"
           src={data.posterPath || "/poster.png"}
+          blurDataURL={BLUR_DATA}
+          placeholder="blur"
           title={data.title}
           alt={data.title}
           height={500}
           width={500}
           unoptimized
           priority
-          placeholder="blur"
-          blurDataURL={BLUR_DATA}
         />
       </figure>
 

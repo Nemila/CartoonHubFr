@@ -9,7 +9,7 @@ export default clerkMiddleware(async (auth, req) => {
   const userRole = (await auth()).sessionClaims?.metadata?.role;
   const isStaff = userRole === "admin" || userRole === "moderator";
   if (isAdminRoute(req) && !isStaff) {
-    const url = new URL("/", req.url);
+    const url = new URL("/not-found", req.url);
     return NextResponse.redirect(url);
   }
 });

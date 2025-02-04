@@ -4,11 +4,8 @@ import TrailerPlayer from "@/components/TrailerPlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
-import SeasonCard from "@/features/media/components/SeasonCard";
 import { checkRole } from "@/server/roles";
 import { MediaType } from "@prisma/client";
-import { ArrowLeftRight } from "lucide-react";
 import { Metadata } from "next";
 import { ResolvingMetadata } from "next/dist/lib/metadata/types/metadata-interface";
 import Image from "next/image";
@@ -19,7 +16,6 @@ type Props = {
   params: Promise<{
     mediaType: string;
     tmdbId: string;
-    episode: string;
     season: string;
   }>;
 };
@@ -88,10 +84,10 @@ const WatchPage = async ({ params }: Props) => {
           <Image
             className="aspect-[3/4.5] w-full rounded-md object-cover"
             src={media.posterPath || "/poster.png"}
-            height={500}
-            width={500}
             title={media.title}
             alt={media.title}
+            height={500}
+            width={500}
             unoptimized
           />
 
@@ -134,12 +130,12 @@ const WatchPage = async ({ params }: Props) => {
               {media.providers.map((item) => (
                 <div key={item.id} className="overflow-hidden rounded-md">
                   <Image
-                    src={item.logoPath}
-                    width={500}
-                    height={500}
-                    alt={item.name}
-                    title={item.name}
                     className="size-full object-contain"
+                    src={item.logoPath}
+                    title={item.name}
+                    alt={item.name}
+                    height={500}
+                    width={500}
                     unoptimized
                   />
                 </div>
@@ -156,12 +152,12 @@ const WatchPage = async ({ params }: Props) => {
                   className="flex h-14 items-center justify-center overflow-hidden rounded-md bg-white px-4 py-2"
                 >
                   <Image
-                    src={item.logoPath}
-                    width={500}
-                    height={500}
-                    alt={item.name}
-                    title={item.name}
                     className="size-full object-contain"
+                    src={item.logoPath}
+                    title={item.name}
+                    alt={item.name}
+                    height={500}
+                    width={500}
                     unoptimized
                   />
                 </div>

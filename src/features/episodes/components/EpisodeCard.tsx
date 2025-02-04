@@ -1,17 +1,25 @@
 import { Badge } from "@/components/ui/badge";
+import { BLUR_DATA } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { episode } from "@prisma/client";
 import { Star } from "lucide-react";
 import Image from "next/image";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 
 type Props = { episode: episode };
 const EpisodeCard = ({ episode }: Props) => {
   const [number, setNumber] = useQueryState(
     "ep",
-    parseAsInteger.withDefault(1),
+    parseAsInteger.withDefault(1).withOptions({
+      shallow: false,
+    }),
   );
-  const [display] = useQueryState("display", parseAsString.withDefault("card"));
+  const [display] = useQueryState(
+    "display",
+    parseAsStringLiteral(["card", "list"]).withDefault("card").withOptions({
+      shallow: false,
+    }),
+  );
 
   if (display === "list") {
     return (
@@ -19,7 +27,7 @@ const EpisodeCard = ({ episode }: Props) => {
         onClick={() => setNumber(episode.number)}
         title={`Episode ${episode.number}`}
         className={cn(
-          "bg-dark-2 focus-visible:bg-dark-2 hover:bg-dark-3 flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-all hover:scale-[1.01] hover:ring-1 hover:ring-white focus-visible:scale-[1.01] active:hover:scale-[0.99]",
+          "flex items-center gap-2 rounded-lg bg-dark-2 px-3 py-2 text-left text-sm transition-all hover:scale-[1.01] hover:bg-dark-3 hover:ring-1 hover:ring-white focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
           number === episode.number &&
             "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus-visible:bg-secondary/90",
         )}
@@ -62,7 +70,7 @@ const EpisodeCard = ({ episode }: Props) => {
       onClick={() => setNumber(episode.number)}
       title={`Episode ${episode.number}`}
       className={cn(
-        "hover:bg-dark-2 focus-visible:bg-dark-2 rounded-md text-left transition-all hover:scale-[1.01] hover:ring-1 hover:ring-white focus-visible:scale-[1.01] active:hover:scale-[0.99]",
+        "rounded-md text-left transition-all hover:scale-[1.01] hover:bg-dark-2 hover:ring-1 hover:ring-white focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
         number === episode.number &&
           "bg-dark-3 hover:bg-dark-3/90 focus-visible:bg-dark-3/90",
       )}
@@ -71,9 +79,11 @@ const EpisodeCard = ({ episode }: Props) => {
         <figure className="relative aspect-[1.6/1] h-[110px] shrink-0 overflow-hidden rounded-md">
           <Image
             className="size-full object-cover object-center"
-            src={episode.stillPath || "/no-video.png"}
             alt={episode.title || `Episode ${episode.number}`}
             title={episode.title || `Episode ${episode.number}`}
+            src={episode.stillPath || "/no-video.png"}
+            blurDataURL={BLUR_DATA}
+            placeholder="blur"
             height={500}
             width={500}
             unoptimized

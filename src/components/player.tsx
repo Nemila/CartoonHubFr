@@ -27,24 +27,35 @@ type Props = {
 const Player = ({ media, seasonCount, episodes }: Props) => {
   const [number, setNumber] = useQueryState(
     "ep",
-    parseAsInteger.withDefault(1),
+    parseAsInteger.withDefault(1).withOptions({
+      shallow: false,
+    }),
   );
-  const [playerId, setPlayerId] = useQueryState("player", parseAsInteger);
+  const [playerId, setPlayerId] = useQueryState(
+    "player",
+    parseAsInteger.withOptions({
+      shallow: false,
+    }),
+  );
 
   const episode = useMemo(() => {
     if (episodes.length < 1) return null;
+
     const findEpisode = episodes.find((ep) => ep.number === number);
     const episode = findEpisode || episodes[0];
+
     if (!episode) return null;
     return episode;
   }, [number, episodes]);
 
   const player = useMemo(() => {
     if (!episode) return null;
+
     const players = episode.players;
     const findPlayer = players.find((pl) => pl.id === playerId);
     const player = findPlayer || players[0];
     if (!player) return null;
+
     setPlayerId(player.id);
     return player;
   }, [playerId, episode, setPlayerId]);
@@ -140,7 +151,7 @@ const Player = ({ media, seasonCount, episodes }: Props) => {
         )}
       </div>
 
-      <div className="flex flex-col items-start justify-start gap-2 lg:max-w-md">
+      <div className="flex w-full flex-col items-start justify-start gap-2 lg:max-w-sm">
         <EpisodeSelector episodes={episodes} />
 
         {media.mediaType === "series" && (

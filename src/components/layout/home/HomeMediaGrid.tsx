@@ -1,9 +1,9 @@
 "use client";
 import MediaCard from "@/features/media/components/MediaCard";
-import { media } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { media } from "@prisma/client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 
 type Props = {
   data: {
@@ -12,10 +12,12 @@ type Props = {
   };
 };
 
+const orderByArray = ["popularity", "createdAt"] as const;
+
 const HomeMediaGrid = ({ data }: Props) => {
   const [orderBy, setOrderBy] = useQueryState(
     "orderBy",
-    parseAsString.withDefault("popularity"),
+    parseAsStringLiteral(orderByArray).withDefault("popularity"),
   );
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
@@ -74,7 +76,7 @@ const HomeMediaGrid = ({ data }: Props) => {
       </header>
 
       <div className="cartoon-grid">
-        {data[orderBy as "popularity" | "createdAt"]
+        {data[orderBy]
           .slice((page - 1) * 30, (page - 1) * 30 + 30)
           .map((item) => (
             <MediaCard key={item.id} data={item} />

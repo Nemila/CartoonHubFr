@@ -8,21 +8,22 @@ import { BLUR_DATA } from "@/lib/data";
 const HorizontalCard = ({ data }: { data: media }) => {
   return (
     <Link
+      prefetch={false}
       href={`/${data.mediaType}/${data.tmdbId}/${data.season}`}
       className="group flex h-[100px] items-center rounded-lg bg-dark-2 outline-none ring-ring transition-all hover:-translate-x-1 hover:ring-1 focus-visible:-translate-x-1 focus-visible:ring-1"
     >
       <figure className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-lg">
         <Image
-          alt="poster"
-          title="poster"
-          src={data.posterPath || ""}
-          width={500}
-          height={500}
-          unoptimized
-          priority
-          placeholder="blur"
-          blurDataURL={BLUR_DATA}
           className="size-full object-cover object-center"
+          src={data.posterPath || ""}
+          blurDataURL={BLUR_DATA}
+          placeholder="blur"
+          title="poster"
+          height={500}
+          width={500}
+          unoptimized
+          alt="poster"
+          priority
         />
       </figure>
 

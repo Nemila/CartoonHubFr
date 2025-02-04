@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import ReactPlayer from "react-player";
+
 type Props = { videos: string[] };
 
 const TrailerPlayer = ({ videos }: Props) => {

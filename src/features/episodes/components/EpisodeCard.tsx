@@ -27,7 +27,7 @@ const EpisodeCard = ({ episode }: Props) => {
         onClick={() => setNumber(episode.number)}
         title={`Episode ${episode.number}`}
         className={cn(
-          "flex items-center gap-2 rounded-lg bg-dark-2 px-3 py-2 text-left text-sm transition-all hover:scale-[1.01] hover:bg-dark-3 hover:ring-1 hover:ring-white focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
+          "flex items-center gap-2 rounded-lg bg-dark-2 px-3 py-2 text-left text-sm outline-none transition-all hover:scale-[1.01] hover:bg-dark-3 hover:ring-1 hover:ring-white focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
           number === episode.number &&
             "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus-visible:bg-secondary/90",
         )}
@@ -49,7 +49,9 @@ const EpisodeCard = ({ episode }: Props) => {
           <span>{episode.number}.</span>
         )}
 
-        <p>{episode.title || `Episode ${episode.number}`}</p>
+        <p className="line-clamp-1">
+          {episode.title || `Episode ${episode.number}`}
+        </p>
 
         <p className="ml-auto flex items-center text-xs">
           <Star
@@ -70,7 +72,7 @@ const EpisodeCard = ({ episode }: Props) => {
       onClick={() => setNumber(episode.number)}
       title={`Episode ${episode.number}`}
       className={cn(
-        "rounded-md text-left transition-all hover:scale-[1.01] hover:bg-dark-2 hover:ring-1 hover:ring-white focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
+        "rounded-md text-left outline-none ring-ring transition-all hover:scale-[1.01] hover:bg-dark-2 hover:ring-1 hover:ring-white focus:ring-1 focus-visible:scale-[1.01] focus-visible:bg-dark-2 active:hover:scale-[0.99]",
         number === episode.number &&
           "bg-dark-3 hover:bg-dark-3/90 focus-visible:bg-dark-3/90",
       )}
@@ -98,7 +100,9 @@ const EpisodeCard = ({ episode }: Props) => {
         </figure>
 
         <div className="flex flex-col p-2">
-          <p>{episode.title || `Episode ${episode.number}`}</p>
+          <p className="line-clamp-1">
+            {episode.title || `Episode ${episode.number}`}
+          </p>
           <p className="line-clamp-3 text-xs font-thin">
             {episode.description || "Aucune description"}
           </p>

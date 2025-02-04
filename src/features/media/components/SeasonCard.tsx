@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { media } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = { media: media; seasonNumber: number };
 
@@ -10,10 +9,11 @@ const SeasonCard = ({ media, seasonNumber }: Props) => {
     <Link
       prefetch={false}
       href={`/${media.mediaType}/${media.tmdbId}/${seasonNumber}`}
+      className="group relative overflow-hidden rounded-lg outline-none ring-secondary transition-all hover:ring-1 focus:ring-1"
     >
-      <Card className="group relative h-full min-h-24 overflow-hidden transition-all">
+      <figure>
         <Image
-          className="left-0 top-0 size-full object-cover object-center transition-all group-hover:scale-110"
+          className="left-0 top-0 size-full object-cover object-center transition-all group-hover:scale-110 group-focus:scale-110"
           src={media.backdropPath || "/poster.png"}
           alt={media.title + " saison " + seasonNumber}
           title={media.title + " saison " + seasonNumber}
@@ -21,11 +21,11 @@ const SeasonCard = ({ media, seasonNumber }: Props) => {
           width={500}
           unoptimized
         />
+      </figure>
 
-        <div className="absolute left-0 top-0 flex size-full items-center justify-center bg-black/70">
-          <p className="font-medium">Saison {seasonNumber}</p>
-        </div>
-      </Card>
+      <div className="absolute left-0 top-0 flex size-full items-center justify-center bg-black/70 group-hover:text-secondary group-focus:text-secondary">
+        <p className="font-medium">Saison {seasonNumber}</p>
+      </div>
     </Link>
   );
 };

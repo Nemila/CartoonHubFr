@@ -13,18 +13,18 @@ import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <nav className="bg-dark-1 sticky left-0 top-0 z-10 flex w-full items-center justify-center border-b">
+    <nav className="sticky left-0 top-0 z-10 flex w-full items-center justify-center border-b bg-dark-1">
       <div className="container flex h-full min-h-16 items-center justify-between gap-4">
         <Link prefetch={false} href={"/"}>
           <Image
-            priority
+            className="h-[43px] w-[100px]"
+            src={"/logo-light.svg"}
             alt="logo"
             width={100}
             height={43}
             title="logo"
-            className="h-[43px] w-[100px]"
-            src={"/logo-light.svg"}
             unoptimized
+            priority
           />
         </Link>
 

@@ -13,7 +13,7 @@ const sectionClass =
 
 const Sidebar = ({ series, movies }: Props) => {
   return (
-    <aside className="flex w-full flex-col gap-4 lg:max-w-sm">
+    <>
       <div className={sectionClass}>
         <CommunityCard />
         <DonationCard />
@@ -29,7 +29,7 @@ const Sidebar = ({ series, movies }: Props) => {
           title={`Top Films ${new Date().getFullYear() - 1}`}
         />
       </div>
-    </aside>
+    </>
   );
 };
 

@@ -31,14 +31,15 @@ export const searchMedia = async (query?: string) => {
 };
 
 export const getMediaDetails = async (payload: GetMediaDetailsType) => {
-  const valid = getMediaDetailsSchema.parse(payload);
-
-  const media = await mediaService.details(valid);
-  if (!media) throw new Error("Media not found");
-
-  const seasonCount = await mediaService.countSeasons(payload);
-
-  return { payload: valid, media, seasonCount };
+  try {
+    const valid = getMediaDetailsSchema.parse(payload);
+    const media = await mediaService.details(valid);
+    if (!media) throw new Error("Media not found");
+    const seasonCount = await mediaService.countSeasons(payload);
+    return { media, seasonCount };
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const getMediaCount = async (mediaType: "series" | "movies") => {

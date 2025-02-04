@@ -21,10 +21,12 @@ const Home = async () => {
           />
         </section>
 
-        <Sidebar
-          series={popularSeriesLastYear.slice(0, 5)}
-          movies={popularMoviesLastYear.slice(0, 5)}
-        />
+        <aside className="flex w-full flex-col gap-4 lg:max-w-sm">
+          <Sidebar
+            series={popularSeriesLastYear.slice(0, 5)}
+            movies={popularMoviesLastYear.slice(0, 5)}
+          />
+        </aside>
       </div>
     </main>
   );

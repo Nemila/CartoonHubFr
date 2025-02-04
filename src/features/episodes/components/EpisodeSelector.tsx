@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import EpisodeCard from "@/features/episodes/components/EpisodeCard";
 import { Prisma } from "@prisma/client";
@@ -20,13 +19,15 @@ const EpisodeSelector = ({ episodes }: Props) => {
   );
 
   return (
-    <Card className="flex max-h-[521.6px] w-full flex-col">
-      <div className="flex gap-1 border-b p-1">
+    <div className="flex max-h-[580px] w-full flex-col">
+      <div className="flex gap-1 pb-2">
         <Input
           onChange={(e) => setFilter(e.currentTarget.value)}
           placeholder="Filtrer les episodes"
+          className="border-none"
           value={filter}
         />
+
         <Button
           onClick={() => setDisplay(display === "card" ? "list" : "card")}
           className="shrink-0"
@@ -37,13 +38,16 @@ const EpisodeSelector = ({ episodes }: Props) => {
         </Button>
       </div>
 
-      <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-1 overflow-y-auto p-1.5">
+      <div
+        tabIndex={-1}
+        className="grid h-full grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-1 overflow-y-auto p-1.5"
+      >
         {episodes.map((item) => {
           const show = `${item.number}`.includes(filter);
           if (show) return <EpisodeCard episode={item} key={item.id} />;
         })}
       </div>
-    </Card>
+    </div>
   );
 };
 

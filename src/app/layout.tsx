@@ -8,6 +8,8 @@ import type { Metadata } from "next";
 import { Karla as Font } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
+import "@vidstack/react/player/styles/base.css";
+import "@vidstack/react/player/styles/plyr/theme.css";
 
 const fontSans = Font({
   subsets: ["latin"],
@@ -49,7 +51,11 @@ export default function RootLayout({
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
-      <html lang="fr" className={cn("dark", fontSans.className)}>
+      <html
+        lang="fr"
+        suppressHydrationWarning
+        className={cn("dark", fontSans.className)}
+      >
         <ReactQueryProvider>
           <NuqsAdapter>
             <body

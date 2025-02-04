@@ -8,37 +8,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import EpisodeSelector from "@/features/episodes/components/EpisodeSelector";
+import SeasonCard from "@/features/media/components/SeasonCard";
 import { Prisma } from "@prisma/client";
 import { ArrowLeftRight, Clock, FastForward, Rewind, Star } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useMemo } from "react";
 
 type Props = {
-  mediaBackdrop?: string;
-  episodes: Prisma.episodeGetPayload<{
+  seasonCount: number;
+  media: Prisma.mediaGetPayload<{
     include: {
-      players: true;
+      episodes: {
+        include: {
+          players: true;
+        };
+      };
     };
-  }>[];
+  }>;
 };
 
-const Player = ({ episodes, mediaBackdrop }: Props) => {
+const Player = ({ media, seasonCount }: Props) => {
   const [number, setNumber] = useQueryState(
     "ep",
-    parseAsInteger.withDefault(episodes[0].number),
+    parseAsInteger.withDefault(media.episodes[0].number),
   );
   const [playerId, setPlayerId] = useQueryState(
     "player",
-    parseAsInteger.withDefault(episodes[0].players[0].id),
+    parseAsInteger.withDefault(media.episodes[0].players[0].id),
   );
 
   const episode = useMemo(() => {
-    if (episodes.length < 1) return null;
-    const findEpisode = episodes.find((ep) => ep.number === number);
-    const episode = findEpisode || episodes[0];
+    if (media.episodes.length < 1) return null;
+    const findEpisode = media.episodes.find((ep) => ep.number === number);
+    const episode = findEpisode || media.episodes[0];
     if (!episode) return null;
     return episode;
-  }, [episodes, number]);
+  }, [media.episodes, number]);
 
   const player = useMemo(() => {
     if (!episode) return null;
@@ -55,7 +61,7 @@ const Player = ({ episodes, mediaBackdrop }: Props) => {
       <div className="flex aspect-video items-center justify-center overflow-hidden rounded-lg border bg-dark-1">
         {player ? (
           <iframe
-            src={`${player.url}?thumbnail=${episode?.stillPath || mediaBackdrop}`}
+            src={`${player.url}?thumbnail=${episode?.stillPath || media.backdropPath}`}
             title="CartoonHub Video Player"
             allow="encrypted-media"
             className="size-full"
@@ -91,7 +97,7 @@ const Player = ({ episodes, mediaBackdrop }: Props) => {
         <Button
           variant={"ghost"}
           onClick={() => setNumber(number - 1)}
-          disabled={number <= episodes[0].number}
+          disabled={number <= media.episodes[0].number}
         >
           <Rewind className="fill-white stroke-white group-hover:fill-secondary group-hover:stroke-secondary" />
           Precedent
@@ -100,7 +106,7 @@ const Player = ({ episodes, mediaBackdrop }: Props) => {
         <Button
           variant={"ghost"}
           onClick={() => setNumber(number + 1)}
-          disabled={number >= episodes[episodes.length - 1].number}
+          disabled={number >= media.episodes[media.episodes.length - 1].number}
         >
           Suivant
           <FastForward className="fill-white stroke-white group-hover:fill-secondary group-hover:stroke-secondary" />
@@ -141,6 +147,21 @@ const Player = ({ episodes, mediaBackdrop }: Props) => {
           Si la vidéo ne fonctionne pas, essayez un autre lecteur ou
           rafraîchissez la page.
         </div>
+      </div>
+
+      <div className="flex flex-col lg:hidden">
+        <EpisodeSelector episodes={media.episodes} />
+
+        {media.mediaType === "series" && (
+          <div className="flex w-full flex-col">
+            <div className="text-lg font-medium">Saisons</div>
+            <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-1 overflow-y-auto p-1.5">
+              {Array.from({ length: seasonCount }).map((_, i) => (
+                <SeasonCard key={i} media={media} seasonNumber={i + 1} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

@@ -53,12 +53,10 @@ const WatchPage = async ({ params }: Props) => {
   if (!data) return notFound();
   const { media, seasonCount } = data;
 
-  console.log(media);
-
   return (
     <main className="grid grid-cols-1 gap-2 py-2 lg:grid-cols-[1fr,384px]">
       <section className="flex flex-col gap-2">
-        <Player episodes={media.episodes} />
+        <Player media={media} seasonCount={seasonCount} />
 
         <div className="flex flex-col gap-2 rounded-lg bg-dark-1 p-2 md:flex-row">
           <div className="flex w-full shrink-0 flex-col gap-2 md:max-w-[200px]">
@@ -204,17 +202,19 @@ const WatchPage = async ({ params }: Props) => {
         </div>
       </section>
 
-      <section className="flex min-w-[300px] flex-1 flex-col gap-2 lg:max-w-sm">
+      <section className="hidden w-full flex-col gap-2 lg:flex">
         <EpisodeSelector episodes={media.episodes} />
 
-        <div className="flex max-h-[580px] w-full flex-col">
-          <div className="text-lg font-medium">Saisons</div>
-          <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-1 overflow-y-auto p-1.5">
-            {Array.from({ length: seasonCount }).map((_, i) => (
-              <SeasonCard key={i} media={media} seasonNumber={i + 1} />
-            ))}
+        {media.mediaType === "series" && (
+          <div className="flex w-full flex-col">
+            <div className="text-lg font-medium">Saisons</div>
+            <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-1 overflow-y-auto p-1.5">
+              {Array.from({ length: seasonCount }).map((_, i) => (
+                <SeasonCard key={i} media={media} seasonNumber={i + 1} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {media.videos.length > 0 && <TrailerPlayer videos={media.videos} />}
       </section>

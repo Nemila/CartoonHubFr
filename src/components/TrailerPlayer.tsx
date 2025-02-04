@@ -11,7 +11,6 @@ type Props = { videos: string[] };
 
 const TrailerPlayer = ({ videos }: Props) => {
   const [videoId, setVideoId] = useState(0);
-  console.log(videos[videoId].match(/v?=(.*)/)?.[1]);
 
   return (
     <div className="flex flex-col gap-2">

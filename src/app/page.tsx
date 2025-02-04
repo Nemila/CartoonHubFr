@@ -12,7 +12,7 @@ const Home = async () => {
       <Featured media={trending.slice(0, 5)} />
 
       <div className="flex flex-col gap-4 lg:flex-row">
-        <section>
+        <section className="flex-1">
           <HomeMediaGrid
             data={{
               popularity: trending,
